@@ -1,0 +1,46 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "io.freefair.gradle:lombok-plugin:6.5.0.2"
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+group 'gg.saki'
+version '1.0-SNAPSHOT'
+
+subprojects {
+    apply(plugin: 'java')
+    apply(plugin: 'io.freefair.lombok')
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    tasks.withType(JavaCompile) {
+        options.encoding('UTF-8')
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    lombok {
+        version = '1.18.24'
+    }
+
+    processResources {
+        filter(ReplaceTokens, tokens: [
+                "zaikoVersion": this.properties['zaikoVersion']
+        ])
+    }
+}

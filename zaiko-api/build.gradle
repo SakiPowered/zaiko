@@ -1,0 +1,9 @@
+plugins {
+    id 'java-library'
+}
+
+version this.properties['zaikoVersion']
+
+dependencies {
+    //any dependencies possibly needed
+}
