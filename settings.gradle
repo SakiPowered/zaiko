@@ -1,4 +1,3 @@
 rootProject.name = 'zaiko'
 include 'zaiko-api'
-include 'zaiko-spigot'
 
