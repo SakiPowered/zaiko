@@ -3,9 +3,3 @@ plugins {
 }
 
 version this.properties['zaikoVersion']
-
-dependencies {
-    implementation 'org.jetbrains:annotations:20.1.0'
-
-    //any dependencies possibly needed
-}

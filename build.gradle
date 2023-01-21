@@ -9,7 +9,6 @@ buildscript {
 
     dependencies {
         classpath('gradle.plugin.com.github.johnrengelman:shadow:7.1.2')
-        classpath "io.freefair.gradle:lombok-plugin:6.5.0.2"
     }
 }
 
@@ -23,7 +22,6 @@ version '1.0-SNAPSHOT'
 subprojects {
     apply(plugin: 'java')
     apply(plugin: 'com.github.johnrengelman.shadow')
-    apply(plugin: 'io.freefair.lombok')
 
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -35,16 +33,11 @@ subprojects {
     repositories {
         mavenCentral()
 
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+        maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     }
 
     dependencies {
-        compileOnly 'org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT'
-    }
-
-    lombok {
-        version = '1.18.24'
+        compileOnly('com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT')
     }
 
     processResources {

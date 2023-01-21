@@ -1,7 +1,5 @@
 package gg.saki.menu;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +9,8 @@ import java.util.Map;
 
 public abstract class Menu implements InventoryHolder {
 
-    @Setter private Inventory inventory;
-    @Getter private final String stringIdentifier;
+    private Inventory inventory;
+    private final String stringIdentifier;
 
     private Map<Integer, Slot> slots = new HashMap<>();
 
@@ -35,5 +33,15 @@ public abstract class Menu implements InventoryHolder {
     @Override
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public String getStringIdentifier() {
+        return stringIdentifier;
     }
 }
