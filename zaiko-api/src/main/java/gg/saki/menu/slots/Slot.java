@@ -9,13 +9,13 @@ public abstract class Slot<T> {
 
     private BaseMenu<T> menu;
 
-    private int slot;
+    private int index;
     private ItemStack item = null;
     private boolean locked = false;
 
     public Slot(BaseMenu<T> menu, int slot){
         this.menu = menu;
-        this.slot = slot;
+        this.index = slot;
     }
 
 
@@ -23,5 +23,9 @@ public abstract class Slot<T> {
 
     public BaseMenu<T> getMenu() {
         return menu;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

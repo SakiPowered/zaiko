@@ -6,4 +6,5 @@ version this.properties['zaikoVersion']
 
 dependencies {
     compileOnly(project(':zaiko-api'))
+    compileOnly('com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT')
 }
