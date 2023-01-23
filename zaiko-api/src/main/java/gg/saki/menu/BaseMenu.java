@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+@SuppressWarnings("unused")
 public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     private Inventory inventory;
@@ -31,6 +32,10 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
     }
 
     public abstract void build();
+
+    public void onOpen(Player player){}
+
+    public void onClose(Player player){}
 
     public Slot<T> getSlot(int index){
         if(!isWithinBounds(index)){
@@ -61,6 +66,10 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
         return stringIdentifier;
     }
 
+    public Map<Integer, Slot<T>> getSlots() {
+        return slots;
+    }
+
     boolean isWithinBounds(int index){
         return inventory.getContents().length > index;
     }
@@ -73,6 +82,7 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
             this.viewers.put(player.getUniqueId(), this.getInventory());
         }
 
+        this.getInventory().clear();
         build();
         player.openInventory(this.getInventory());
     }

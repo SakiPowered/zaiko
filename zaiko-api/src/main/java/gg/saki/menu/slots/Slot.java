@@ -28,4 +28,8 @@ public abstract class Slot<T> {
     public int getIndex() {
         return index;
     }
+
+    public boolean isLocked() {
+        return locked;
+    }
 }

@@ -2,6 +2,8 @@ package gg.saki;
 
 import gg.saki.menu.BaseMenu;
 import gg.saki.menu.creator.InventoryCreator;
+import gg.saki.menu.listeners.MenuListener;
+import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +19,8 @@ public class ZaikoMenuService implements MenuService {
 
     public ZaikoMenuService(JavaPlugin plugin) {
         this.plugin = plugin;
+
+        Bukkit.getPluginManager().registerEvents(new MenuListener(), plugin);
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings({"unused"})
 public class Zaiko {
 
     private static final ConcurrentHashMap<String, MenuService> services = new ConcurrentHashMap<>();
