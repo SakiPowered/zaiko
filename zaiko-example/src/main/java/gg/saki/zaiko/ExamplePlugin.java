@@ -16,14 +16,14 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         menuService = Zaiko.get(this);
-        menuService.register(StringCreator.INSTANCE, "Backpack", InventoryType.HOPPER, new ExampleMenu(ExampleMenu.ID));
+        menuService.register(StringCreator.INSTANCE, "Backpack", InventoryType.HOPPER, new ExampleMenu());
 
         Bukkit.getPluginManager().registerEvents(this, this);
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
-        Menu menu = (Menu) menuService.get(ExampleMenu.ID);
+        Menu menu = menuService.get(ExampleMenu.class);
         menu.open(event.getPlayer());
     }
 }

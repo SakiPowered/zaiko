@@ -1,7 +1,6 @@
 package gg.saki.zaiko.menu;
 
 import gg.saki.zaiko.ZaikoMenuService;
-import gg.saki.zaiko.menu.creator.InventoryCreator;
 import gg.saki.zaiko.menu.slots.Slot;
 import gg.saki.zaiko.menu.slots.SlotCreation;
 import org.bukkit.entity.Player;
@@ -11,35 +10,27 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     private Inventory inventory;
-    private InventoryCreator<T> creator;
-
-    private final Map<UUID, Inventory> viewers;
 
     private Consumer<Void> createInventory;
     private Consumer<Player> playerDependantLogic;
     private int refreshTicks = -1;
 
     private ZaikoMenuService service;
-    private final String stringIdentifier;
     private BaseMenu<T> parent;
 
     private final Map<Integer, Slot<T>> slots = new HashMap<>();
 
-    public BaseMenu(ZaikoMenuService service, String stringIdentifier){
-        this.service = service;
-        this.stringIdentifier = stringIdentifier;
-        this.viewers = new HashMap<>();
+    public BaseMenu(){
     }
 
-    public BaseMenu(ZaikoMenuService service, String stringIdentifier, BaseMenu<T> parent){
-        this(service, stringIdentifier);
+    public BaseMenu(BaseMenu<T> parent){
+        this();
         this.parent = parent;
     }
 
@@ -78,16 +69,8 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
         this.inventory = inventory;
     }
 
-    public void setCreator(InventoryCreator<T> creator) {
-        this.creator = creator;
-    }
-
     public void setCreateInventory(Consumer<Void> createInventory) {
         this.createInventory = createInventory;
-    }
-
-    public String getStringIdentifier() {
-        return stringIdentifier;
     }
 
     public Map<Integer, Slot<T>> getSlots() {
@@ -96,6 +79,10 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     public ZaikoMenuService getService() {
         return service;
+    }
+
+    public void setService(ZaikoMenuService service) {
+        this.service = service;
     }
 
     public int getRefreshTicks() {
@@ -107,18 +94,22 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
     }
 
     public void open(Player player){
-        if(this.viewers.containsKey(player.getUniqueId())){
-            this.setInventory(this.viewers.get(player.getUniqueId()));
-        }else{
+        open(player, null);
+    }
+
+    public void open(Player player, Inventory inventory){
+        boolean premade = inventory != null;
+        if(!premade){
             this.createInventory.accept(null);
-            this.viewers.put(player.getUniqueId(), this.getInventory());
+            inventory = this.getInventory();
+            if(this.refreshTicks > 0) this.getService().getRefresher().add(player, this);
         }
 
-        this.getInventory().clear();
+        inventory.clear();
         build();
         if(playerDependantLogic != null) playerDependantLogic.accept(player);
-        player.openInventory(this.getInventory());
-        if(this.refreshTicks > 0) this.getService().getRefresher().add(player, this);
+
+        if(!premade) player.openInventory(this.getInventory());
     }
 
     public void returnToParent(Player player){

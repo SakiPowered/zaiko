@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class Refresher {
 
-    private Map<UUID, BukkitTask> refreshing;
+    private final Map<UUID, BukkitTask> refreshing;
 
     public Refresher(){
         this.refreshing = new HashMap<>();
@@ -18,13 +18,13 @@ public class Refresher {
 
     public void add(Player player, BaseMenu<?> menu){
         this.refreshing.put(player.getUniqueId(), Bukkit.getScheduler().runTaskTimerAsynchronously(menu.getService().getPlugin(), () -> {
-            Bukkit.getScheduler().runTask(menu.getService().getPlugin(), () -> menu.open(player));
+            Bukkit.getScheduler().runTask(menu.getService().getPlugin(), () -> menu.open(player, player.getOpenInventory().getTopInventory()));
         }, menu.getRefreshTicks(), menu.getRefreshTicks()));
     }
 
     public void remove(Player player){
         BukkitTask task = this.refreshing.get(player.getUniqueId());
-        task.cancel();
+        if(task != null) task.cancel();
 
         this.refreshing.remove(player.getUniqueId());
     }
