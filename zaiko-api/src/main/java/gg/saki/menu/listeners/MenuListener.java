@@ -25,13 +25,13 @@ public class MenuListener implements Listener {
         Slot<?> slot = menu.getSlots().get(event.getSlot());
         if(slot == null) return;
 
-        if(slot.isLocked()) event.setCancelled(true);
-
         //add logic for handling click
         for(ClickProperty property : slot.getProperties().stream().filter(property -> property instanceof ClickProperty).map(property -> (ClickProperty) property).toList()){
-            if(!List.of(property.getAcceptedClicks()).contains(event.getClick())) return;
+            if(!List.of(property.getAcceptedClicks()).contains(event.getClick())) continue;
             property.onClick().accept(player);
         }
+
+        if(slot.isLocked()) event.setCancelled(true);
     }
 
     @EventHandler
