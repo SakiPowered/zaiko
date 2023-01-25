@@ -1,9 +1,7 @@
 package gg.saki.zaiko;
 
-import gg.saki.MenuService;
-import gg.saki.Zaiko;
-import gg.saki.menu.Menu;
-import gg.saki.menu.creator.StringCreator;
+import gg.saki.zaiko.menu.Menu;
+import gg.saki.zaiko.menu.creator.StringCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
