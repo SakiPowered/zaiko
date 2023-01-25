@@ -37,11 +37,15 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     public void onClose(Player player){}
 
-    public Slot<T> getSlot(int index){
+    public Slot<T> getSlot(int index, boolean locked){
         if(!isWithinBounds(index)){
             throw new ArrayIndexOutOfBoundsException("Index is out of bounds for menu");
         }
-        return this.slots.computeIfAbsent(index, integer -> createSlot(this, integer));
+        return this.slots.computeIfAbsent(index, integer -> createSlot(this, integer, locked));
+    }
+
+    public Slot<T> getSlot(int index){
+        return getSlot(index, true);
     }
 
     @NotNull

@@ -9,7 +9,7 @@ import org.bukkit.event.inventory.ClickType;
 
 import java.util.function.Consumer;
 
-public class ClickPropertyBuilder implements Builder<Property> {
+public class ClickPropertyBuilder implements Builder<ClickProperty> {
 
     private final Slot<?> slot;
     private ClickType[] allowed;
@@ -19,12 +19,12 @@ public class ClickPropertyBuilder implements Builder<Property> {
         this.slot = slot;
     }
 
-    public Builder<Property> allow(ClickType... allowed){
+    public ClickPropertyBuilder allow(ClickType... allowed){
         this.allowed = allowed;
         return this;
     }
 
-    public Builder<Property> click(Consumer<Player> onClick){
+    public ClickPropertyBuilder click(Consumer<Player> onClick){
         this.onClick = onClick;
         return this;
     }

@@ -1,2 +1,4 @@
 rootProject.name = 'zaiko'
 include('zaiko-api', 'zaiko-adventure')
+include 'zaiko-example'
+

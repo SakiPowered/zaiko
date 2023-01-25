@@ -1,11 +1,9 @@
 package gg.saki.menu.slots;
 
 import gg.saki.menu.BaseMenu;
-import gg.saki.menu.builders.Builder;
 import gg.saki.menu.builders.item.ItemBuilder;
 import gg.saki.menu.builders.property.ClickPropertyBuilder;
 import gg.saki.menu.slots.properties.Property;
-import gg.saki.menu.slots.properties.impl.ClickProperty;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +14,7 @@ public abstract class Slot<T> {
 
     private BaseMenu<T> menu;
 
-    private int index;
+    private final int index;
     private ItemStack item = null;
     private boolean locked = false;
 
@@ -31,7 +29,16 @@ public abstract class Slot<T> {
 
     public abstract ItemBuilder<T> item(Material material);
 
-    public Builder<Property> clickOptions(){
+    public Slot<T> item(ItemStack item){
+        this.getMenu().getInventory().setItem(this.getIndex(), item);
+        return this;
+    }
+
+    public ItemStack item(){
+        return this.getMenu().getInventory().getItem(this.getIndex());
+    }
+
+    public ClickPropertyBuilder clickOptions(){
         return new ClickPropertyBuilder(this);
     }
 
@@ -45,6 +52,10 @@ public abstract class Slot<T> {
 
     public boolean isLocked() {
         return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public List<Property> getProperties() {

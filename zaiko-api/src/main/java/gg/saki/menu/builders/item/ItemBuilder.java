@@ -37,7 +37,7 @@ public abstract class ItemBuilder<T> implements Builder<ItemStack> {
         return this.item;
     }
 
-    public abstract void individualBuild();
+    protected void individualBuild(){}
 
     public Slot<T> getSlot() {
         return slot;

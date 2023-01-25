@@ -26,7 +26,7 @@ public class ZaikoMenuService implements MenuService {
     @Override
     public <T> BaseMenu<?> register(@NotNull InventoryCreator<T> creator, @NotNull T title, int rows, @NotNull BaseMenu<T> menu) {
         return this.menus.computeIfAbsent(menu.getStringIdentifier(), s -> {
-            menu.setCreateInventory(unused -> menu.setInventory(creator.createInventory(menu, rows, title)));
+            menu.setCreateInventory(unused -> menu.setInventory(creator.createInventory(menu, rows*9, title)));
             menu.setCreator(creator);
             return menu;
         });

@@ -9,7 +9,9 @@ public abstract class Menu extends BaseMenu<String> {
     }
 
     @Override
-    public Slot<String> createSlot(BaseMenu<String> menu, int index) {
-        return new StringSlot(menu, index);
+    public Slot<String> createSlot(BaseMenu<String> menu, int index, boolean locked) {
+        Slot<String> slot = new StringSlot(menu, index);
+        slot.setLocked(locked);
+        return slot;
     }
 }
