@@ -21,6 +21,7 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     private final Map<UUID, Inventory> viewers;
     private Consumer<Void> createInventory;
+    private Consumer<Player> playerDependantLogic;
 
     private final String stringIdentifier;
 
@@ -32,6 +33,10 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
     }
 
     public abstract void build();
+
+    public void setPlayerDependantLogic(Consumer<Player> playerDependantLogic){
+        this.playerDependantLogic = playerDependantLogic;
+    }
 
     public void onOpen(Player player){}
 
@@ -88,6 +93,7 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
         this.getInventory().clear();
         build();
+        if(playerDependantLogic != null) playerDependantLogic.accept(player);
         player.openInventory(this.getInventory());
     }
 }

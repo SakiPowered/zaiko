@@ -26,9 +26,14 @@ public class ExampleMenu extends Menu {
                 .click(player -> player.setHealth(20))
                 .build();
         heal.clickOptions()
-                .allow(ClickType.RIGHT)
+                .allow(ClickType.RIGHT, ClickType.SHIFT_LEFT)
                 .click(player -> player.setHealth(0))
                 .build();
+
+        this.setPlayerDependantLogic(player -> {
+            Slot<String> head = this.getSlot(2, true);
+            head.item(Material.SKELETON_SKULL).name("&b" + player.getName()).lore("This is your backpack.").build();
+        });
     }
 
     @Override
