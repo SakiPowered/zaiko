@@ -1,6 +1,7 @@
 package gg.saki.zaiko;
 
 import gg.saki.zaiko.menu.BaseMenu;
+import gg.saki.zaiko.menu.Refresher;
 import gg.saki.zaiko.menu.creator.InventoryCreator;
 import gg.saki.zaiko.menu.listeners.MenuListener;
 import org.bukkit.Bukkit;
@@ -14,11 +15,13 @@ import java.util.concurrent.ConcurrentMap;
 public class ZaikoMenuService implements MenuService {
 
     private final JavaPlugin plugin;
+    private final Refresher refresher;
 
     private final ConcurrentMap<String, BaseMenu<?>> menus = new ConcurrentHashMap<>();
 
     public ZaikoMenuService(JavaPlugin plugin) {
         this.plugin = plugin;
+        this.refresher = new Refresher();
 
         Bukkit.getPluginManager().registerEvents(new MenuListener(), plugin);
     }
@@ -45,5 +48,13 @@ public class ZaikoMenuService implements MenuService {
     @Override
     public BaseMenu<?> get(@NotNull String identifier) {
         return this.menus.getOrDefault(identifier, null);
+    }
+
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
+
+    public Refresher getRefresher() {
+        return refresher;
     }
 }

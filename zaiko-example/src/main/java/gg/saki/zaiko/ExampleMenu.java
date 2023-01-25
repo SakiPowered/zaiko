@@ -34,6 +34,8 @@ public class ExampleMenu extends Menu {
             Slot<String> head = this.getSlot(2, true);
             head.item(Material.SKELETON_SKULL).name("&b" + player.getName()).lore("This is your backpack.").build();
         });
+
+        this.setRefresh(5*20);
     }
 
     @Override

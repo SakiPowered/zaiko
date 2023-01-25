@@ -1,5 +1,6 @@
 package gg.saki.zaiko.menu;
 
+import gg.saki.zaiko.ZaikoMenuService;
 import gg.saki.zaiko.menu.creator.InventoryCreator;
 import gg.saki.zaiko.menu.slots.Slot;
 import gg.saki.zaiko.menu.slots.SlotCreation;
@@ -20,21 +21,25 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
     private InventoryCreator<T> creator;
 
     private final Map<UUID, Inventory> viewers;
+
     private Consumer<Void> createInventory;
     private Consumer<Player> playerDependantLogic;
+    private int refreshTicks = -1;
 
+    private ZaikoMenuService service;
     private final String stringIdentifier;
     private BaseMenu<T> parent;
 
     private final Map<Integer, Slot<T>> slots = new HashMap<>();
 
-    public BaseMenu(String stringIdentifier){
+    public BaseMenu(ZaikoMenuService service, String stringIdentifier){
+        this.service = service;
         this.stringIdentifier = stringIdentifier;
         this.viewers = new HashMap<>();
     }
 
-    public BaseMenu(String stringIdentifier, BaseMenu<T> parent){
-        this(stringIdentifier);
+    public BaseMenu(ZaikoMenuService service, String stringIdentifier, BaseMenu<T> parent){
+        this(service, stringIdentifier);
         this.parent = parent;
     }
 
@@ -42,6 +47,10 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     public void setPlayerDependantLogic(Consumer<Player> playerDependantLogic){
         this.playerDependantLogic = playerDependantLogic;
+    }
+
+    public void setRefresh(int ticks){
+        this.refreshTicks = ticks;
     }
 
     public void onOpen(Player player){}
@@ -85,6 +94,14 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
         return slots;
     }
 
+    public ZaikoMenuService getService() {
+        return service;
+    }
+
+    public int getRefreshTicks() {
+        return refreshTicks;
+    }
+
     boolean isWithinBounds(int index){
         return inventory.getContents().length > index;
     }
@@ -101,6 +118,7 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
         build();
         if(playerDependantLogic != null) playerDependantLogic.accept(player);
         player.openInventory(this.getInventory());
+        if(this.refreshTicks > 0) this.getService().getRefresher().add(player, this);
     }
 
     public void returnToParent(Player player){

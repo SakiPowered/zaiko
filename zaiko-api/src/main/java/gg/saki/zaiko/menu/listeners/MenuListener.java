@@ -51,6 +51,8 @@ public class MenuListener implements Listener {
         InventoryHolder holder = event.getInventory().getHolder();
         if(!(holder instanceof BaseMenu<?> menu)) return;
 
+        if(menu.getRefreshTicks() > 0) menu.getService().getRefresher().remove(player);
+
         menu.onClose(player);
     }
 }
