@@ -12,12 +12,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+@SuppressWarnings("unchecked")
 public class ZaikoMenuService implements MenuService {
 
     private final JavaPlugin plugin;
     private final Refresher refresher;
 
-    private final ConcurrentMap<String, BaseMenu<?>> menus = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Class<? extends BaseMenu<?>>, BaseMenu<?>> menus = new ConcurrentHashMap<>();
 
     public ZaikoMenuService(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -27,27 +28,26 @@ public class ZaikoMenuService implements MenuService {
     }
 
     @Override
-    public <T> BaseMenu<?> register(@NotNull InventoryCreator<T> creator, @NotNull T title, int rows, @NotNull BaseMenu<T> menu) {
-        return this.menus.computeIfAbsent(menu.getStringIdentifier(), s -> {
+    public <T> BaseMenu<?> register(@NotNull InventoryCreator<T> creator, @NotNull T title, int rows, @NotNull BaseMenu<?> menu) {
+        return this.menus.computeIfAbsent((Class<? extends BaseMenu<?>>) menu.getClass(), s -> {
             menu.setCreateInventory(unused -> menu.setInventory(creator.createInventory(menu, rows*9, title)));
-            menu.setCreator(creator);
+            menu.setService(this);
             return menu;
         });
     }
 
     @Override
-    public <T> BaseMenu<?> register(@NotNull InventoryCreator<T> creator, @NotNull T title, @NotNull InventoryType type, @NotNull BaseMenu<T> menu) {
-        return this.menus.computeIfAbsent(menu.getStringIdentifier(), s -> {
+    public <T> BaseMenu<?> register(@NotNull InventoryCreator<T> creator, @NotNull T title, @NotNull InventoryType type, @NotNull BaseMenu<?> menu) {
+        return this.menus.computeIfAbsent((Class<? extends BaseMenu<?>>) menu.getClass(), s -> {
             menu.setCreateInventory(unused -> menu.setInventory(creator.createInventory(menu, type, title)));
-            menu.setCreator(creator);
+            menu.setService(this);
             return menu;
         });
     }
 
-
     @Override
-    public BaseMenu<?> get(@NotNull String identifier) {
-        return this.menus.getOrDefault(identifier, null);
+    public <T extends BaseMenu<?>> T get(@NotNull Class<? extends BaseMenu<?>> identifier) {
+        return (T) this.menus.getOrDefault(identifier, null);
     }
 
     public JavaPlugin getPlugin() {

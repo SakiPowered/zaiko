@@ -8,12 +8,6 @@ import org.bukkit.event.inventory.ClickType;
 
 public class ExampleMenu extends Menu {
 
-    public static String ID = "EXAMPLE_MENU";
-
-    public ExampleMenu(String stringIdentifier) {
-        super(stringIdentifier);
-    }
-
     @Override
     public void build() {
         Slot<String> heal = this.getSlot(0, true);

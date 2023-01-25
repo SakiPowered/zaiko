@@ -1,7 +1,6 @@
 package gg.saki.zaiko.menu;
 
 import gg.saki.zaiko.ZaikoMenuService;
-import gg.saki.zaiko.menu.creator.InventoryCreator;
 import gg.saki.zaiko.menu.slots.Slot;
 import gg.saki.zaiko.menu.slots.SlotCreation;
 import org.bukkit.entity.Player;
@@ -18,7 +17,6 @@ import java.util.function.Consumer;
 public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     private Inventory inventory;
-    private InventoryCreator<T> creator;
 
     private final Map<UUID, Inventory> viewers;
 
@@ -27,19 +25,16 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
     private int refreshTicks = -1;
 
     private ZaikoMenuService service;
-    private final String stringIdentifier;
     private BaseMenu<T> parent;
 
     private final Map<Integer, Slot<T>> slots = new HashMap<>();
 
-    public BaseMenu(ZaikoMenuService service, String stringIdentifier){
-        this.service = service;
-        this.stringIdentifier = stringIdentifier;
+    public BaseMenu(){
         this.viewers = new HashMap<>();
     }
 
-    public BaseMenu(ZaikoMenuService service, String stringIdentifier, BaseMenu<T> parent){
-        this(service, stringIdentifier);
+    public BaseMenu(BaseMenu<T> parent){
+        this();
         this.parent = parent;
     }
 
@@ -78,16 +73,8 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
         this.inventory = inventory;
     }
 
-    public void setCreator(InventoryCreator<T> creator) {
-        this.creator = creator;
-    }
-
     public void setCreateInventory(Consumer<Void> createInventory) {
         this.createInventory = createInventory;
-    }
-
-    public String getStringIdentifier() {
-        return stringIdentifier;
     }
 
     public Map<Integer, Slot<T>> getSlots() {
@@ -96,6 +83,10 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     public ZaikoMenuService getService() {
         return service;
+    }
+
+    public void setService(ZaikoMenuService service) {
+        this.service = service;
     }
 
     public int getRefreshTicks() {
