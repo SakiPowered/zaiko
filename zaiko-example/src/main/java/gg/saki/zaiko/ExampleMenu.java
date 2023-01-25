@@ -26,10 +26,10 @@ public class ExampleMenu extends Menu {
 
         this.setPlayerDependantLogic(player -> {
             Slot<String> head = this.getSlot(2, true);
-            head.item(Material.SKELETON_SKULL).name("&b" + player.getName()).lore("This is your backpack.").build();
+            head.item(Material.SKELETON_SKULL).name("&b" + player.getName()).lore("&fHealth: &c" + player.getHealth()).build();
         });
 
-        this.setRefresh(5*20);
+        this.setRefresh(2*20);
     }
 
     @Override

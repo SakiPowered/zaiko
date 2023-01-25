@@ -10,15 +10,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
 
     private Inventory inventory;
-
-    private final Map<UUID, Inventory> viewers;
 
     private Consumer<Void> createInventory;
     private Consumer<Player> playerDependantLogic;
@@ -30,7 +27,6 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
     private final Map<Integer, Slot<T>> slots = new HashMap<>();
 
     public BaseMenu(){
-        this.viewers = new HashMap<>();
     }
 
     public BaseMenu(BaseMenu<T> parent){
@@ -98,18 +94,22 @@ public abstract class BaseMenu<T> implements InventoryHolder, SlotCreation<T> {
     }
 
     public void open(Player player){
-        if(this.viewers.containsKey(player.getUniqueId())){
-            this.setInventory(this.viewers.get(player.getUniqueId()));
-        }else{
+        open(player, null);
+    }
+
+    public void open(Player player, Inventory inventory){
+        boolean premade = inventory != null;
+        if(!premade){
             this.createInventory.accept(null);
-            this.viewers.put(player.getUniqueId(), this.getInventory());
+            inventory = this.getInventory();
+            if(this.refreshTicks > 0) this.getService().getRefresher().add(player, this);
         }
 
-        this.getInventory().clear();
+        inventory.clear();
         build();
         if(playerDependantLogic != null) playerDependantLogic.accept(player);
-        player.openInventory(this.getInventory());
-        if(this.refreshTicks > 0) this.getService().getRefresher().add(player, this);
+
+        if(!premade) player.openInventory(this.getInventory());
     }
 
     public void returnToParent(Player player){
