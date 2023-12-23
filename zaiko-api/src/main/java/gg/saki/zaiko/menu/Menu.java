@@ -2,6 +2,9 @@ package gg.saki.zaiko.menu;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public abstract class Menu {
 

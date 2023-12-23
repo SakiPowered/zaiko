@@ -17,12 +17,12 @@ public class Icon implements Placeable {
 
     @Override
     public void click(InventoryClickEvent event) {
-        event.setCancelled(removable);
+        event.setCancelled(!removable);
     }
 
     @Override
     public void drag(InventoryDragEvent event) {
-        event.setCancelled(draggable);
+        event.setCancelled(!draggable);
     }
 
     @Override

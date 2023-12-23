@@ -1,6 +1,8 @@
 package gg.saki.zaiko.menu.placeable;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -12,6 +14,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Builder
+@Getter
+@Setter
 public class Button implements Placeable {
 
     private ItemStack item;

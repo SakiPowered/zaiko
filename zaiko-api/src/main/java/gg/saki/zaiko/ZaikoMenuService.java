@@ -21,14 +21,16 @@ public class ZaikoMenuService implements MenuService {
         Bukkit.getPluginManager().registerEvents(new MenuListener(), plugin);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Menu register(Class<? extends Menu> clazz, Menu menu) {
-        return menuHashMap.put(clazz, menu);
+    public <T extends Menu> T register(Class<T> clazz, Menu menu) {
+        return (T) menuHashMap.put(clazz, menu);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Menu get(Class<? extends Menu> clazz) {
-        return menuHashMap.getOrDefault(clazz, null);
+    public <T extends Menu> T get(Class<T> clazz) {
+        return (T) menuHashMap.getOrDefault(clazz, null);
     }
 
     public JavaPlugin getPlugin() {

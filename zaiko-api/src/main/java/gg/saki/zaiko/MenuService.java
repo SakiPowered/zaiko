@@ -5,7 +5,7 @@ import gg.saki.zaiko.menu.Menu;
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface MenuService {
 
-    Menu register(Class<? extends Menu> clazz, Menu menu);
+    <T extends Menu> T register(Class<T> clazz, Menu menu);
 
-    Menu get(Class<? extends Menu> clazz);
+    <T extends Menu> T get(Class<T> clazz);
 }
