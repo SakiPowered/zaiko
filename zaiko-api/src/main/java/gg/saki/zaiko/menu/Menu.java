@@ -1,14 +1,44 @@
 package gg.saki.zaiko.menu;
 
-import gg.saki.zaiko.menu.slots.Slot;
-import gg.saki.zaiko.menu.slots.StringSlot;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 
-public abstract class Menu extends BaseMenu<String> {
+public abstract class Menu {
 
-    @Override
-    public Slot<String> createSlot(BaseMenu<String> menu, int index, boolean locked) {
-        Slot<String> slot = new StringSlot(menu, index);
-        slot.setLocked(locked);
-        return slot;
+    private final String title;
+    private final int rows;
+    private final InventoryType type;
+
+    public Menu(String title, int rows, InventoryType type){
+        this.title = title;
+        this.rows = rows;
+        this.type = type;
+    }
+
+    public Menu(String title, int rows){
+        this(title, rows, InventoryType.CHEST);
+    }
+
+    public abstract void build(Canvas ctx);
+
+    public void open(Player player){
+        Canvas canvas = new Canvas(this, player);
+        this.build(canvas);
+        player.openInventory(canvas.getInventory());
+    }
+
+    public void close(Player player){
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public InventoryType getType() {
+        return type;
     }
 }

@@ -1,39 +1,27 @@
 package gg.saki.zaiko;
 
+import gg.saki.zaiko.menu.Canvas;
 import gg.saki.zaiko.menu.Menu;
-import gg.saki.zaiko.menu.slots.Slot;
+import gg.saki.zaiko.menu.placeable.Button;
+import gg.saki.zaiko.menu.placeable.Icon;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
 public class ExampleMenu extends Menu {
-
-    @Override
-    public void build() {
-        Slot<String> heal = this.getSlot(0, true);
-        heal.item(Material.SUNFLOWER)
-                .name("&cHeal")
-                .lore("&7Click me to heal!")
-                .build();
-        heal.clickOptions()
-                .allow(ClickType.LEFT)
-                .click(player -> player.setHealth(20))
-                .build();
-        heal.clickOptions()
-                .allow(ClickType.RIGHT, ClickType.SHIFT_LEFT)
-                .click(player -> player.setHealth(0))
-                .build();
-
-        this.setPlayerDependantLogic(player -> {
-            Slot<String> head = this.getSlot(2, true);
-            head.item(Material.SKELETON_SKULL).name("&b" + player.getName()).lore("&fHealth: &c" + player.getHealth()).build();
-        });
-
-        this.setRefresh(2*20);
+    public ExampleMenu(String title, int rows) {
+        super(title, rows);
     }
 
     @Override
-    public void onClose(Player player) {
-        player.sendMessage("You slide the top over the bag, and set it onto your back.");
+    public void build(Canvas ctx) {
+        Button button = Button.builder().item(new ItemStack(Material.RED_BANNER))
+                .action(player -> {
+                    player.sendMessage("You clicked the button!");
+                })
+                .build();
+
+        ctx.place(0,0, button);
+
+        ctx.place(1, 0, Icon.builder().item(new ItemStack(Material.DIAMOND)).build());
     }
 }

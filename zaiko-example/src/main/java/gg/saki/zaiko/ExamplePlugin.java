@@ -1,22 +1,20 @@
 package gg.saki.zaiko;
 
 import gg.saki.zaiko.menu.Menu;
-import gg.saki.zaiko.menu.creator.StringCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ExamplePlugin extends JavaPlugin implements Listener {
 
-    MenuService menuService;
+    private MenuService menuService;
 
     @Override
     public void onEnable() {
-        menuService = Zaiko.get(this);
-        menuService.register(StringCreator.INSTANCE, "Backpack", InventoryType.HOPPER, new ExampleMenu());
+        this.menuService = Zaiko.get(this);
+        this.menuService.register(ExampleMenu.class, new ExampleMenu("Backpack", 3));
 
         Bukkit.getPluginManager().registerEvents(this, this);
     }
