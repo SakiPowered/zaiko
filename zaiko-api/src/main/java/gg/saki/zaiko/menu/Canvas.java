@@ -25,6 +25,8 @@ public class Canvas implements InventoryHolder {
 
     private final Map<Integer, Placeable> placeableMap;
 
+    private boolean playerInventoryEnabled = false;
+
     public Canvas(Menu menu, Player player){
         this.menu = menu;
         this.player = player;
@@ -49,7 +51,7 @@ public class Canvas implements InventoryHolder {
         }
     }
 
-    private int fromCoordinates(int x, int y){
+    public int fromCoordinates(int x, int y){
         return x + (9-y) * y;
     }
 
@@ -59,6 +61,10 @@ public class Canvas implements InventoryHolder {
         } else {
             return Bukkit.createInventory(holder, type.isCreatable() ? type : InventoryType.CHEST, StringUtil.translate(title));
         }
+    }
+
+    public void setPlayerInventoryEnabled(boolean playerInventoryEnabled) {
+        this.playerInventoryEnabled = playerInventoryEnabled;
     }
 
     @NotNull

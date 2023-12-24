@@ -27,9 +27,12 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
-        PaginatedMenu<Player> menu = menuService.get(ExamplePaginatedMenu.class);
-        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+//        PaginatedMenu<Player> menu = menuService.get(ExamplePaginatedMenu.class);
+//        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+//
+//        menu.open(event.getPlayer(), players, 7);
 
-        menu.open(event.getPlayer(), players, 7);
+        ExampleMenu menu = menuService.get(ExampleMenu.class);
+        menu.open(event.getPlayer());
     }
 }
