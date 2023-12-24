@@ -34,5 +34,6 @@ public class ExampleMenu extends Menu {
         ctx.place(slot, input);
 
         ctx.setPlayerInventoryEnabled(true);
+        ctx.setTransferItemsEnabled(false);
     }
 }

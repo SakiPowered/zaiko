@@ -5,14 +5,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Map;
 
 public class MenuListener implements Listener {
@@ -22,23 +20,55 @@ public class MenuListener implements Listener {
         InventoryHolder holder = event.getInventory().getHolder();
         if(!(holder instanceof Canvas canvas)) return;
 
+        if(!(event.getWhoClicked() instanceof Player player)) return;
+
         Inventory clickedInventory = event.getClickedInventory();
-        if(canvas.isPlayerInventoryEnabled() && clickedInventory != null && event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+        if(canvas.isPlayerInventoryEnabled()
+                && clickedInventory != null
+                && event.getClickedInventory().getType() == InventoryType.PLAYER
+                && event.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) return;
+
+
+//        if(!canvas.isTransferItemsEnabled() && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY){
+//            Bukkit.getLogger().info(event.getCursor().getType().name());
+//            Bukkit.getLogger().info(event.getCurrentItem().getType().name());
+//        }
 
         Placeable placeable = getPlaceable(canvas, event.getSlot());
-        if(placeable == null) return;
+        if(placeable == null) {
+            if(!canvas.isTransferItemsEnabled() && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && clickedInventory.getType() == InventoryType.PLAYER){
+                event.setCancelled(true);
+                event.setCursor(null);
+                return;
+            }
+
+            if(!canvas.isTransferItemsEnabled() && clickedInventory != null && clickedInventory.getType() != InventoryType.PLAYER){
+                event.setCancelled(true);
+                player.getInventory().addItem(event.getCursor());
+                event.setCursor(null);
+                return;
+            }
+            return;
+        }
 
         placeable.click(event);
     }
 
     @EventHandler
     public void onDrag(InventoryDragEvent event){
-        InventoryHolder holder = event.getInventory().getHolder();
-        for (Integer rawSlot : event.getInventorySlots()) {
-            Bukkit.getLogger().info(String.valueOf(rawSlot));
-        }
-
+        Inventory inventory = event.getInventory();
+        InventoryHolder holder = inventory.getHolder();
         if(!(holder instanceof Canvas canvas)) return;
+
+        if(!(event.getWhoClicked() instanceof Player player)) return;
+
+        List<Integer> slots = event.getInventorySlots().stream().toList();
+        if(!canvas.isTransferItemsEnabled() && inventory.getType() != InventoryType.PLAYER && inventory.getItem(slots.get(0)) == null){
+            event.setCancelled(true);
+            player.getInventory().addItem(event.getOldCursor());
+            event.setCursor(null);
+            return;
+        }
 
         ItemStack cursor = event.getOldCursor();
 

@@ -26,6 +26,7 @@ public class Canvas implements InventoryHolder {
     private final Map<Integer, Placeable> placeableMap;
 
     private boolean playerInventoryEnabled = false;
+    private boolean transferItemsEnabled = false;
 
     public Canvas(Menu menu, Player player){
         this.menu = menu;
@@ -65,6 +66,10 @@ public class Canvas implements InventoryHolder {
 
     public void setPlayerInventoryEnabled(boolean playerInventoryEnabled) {
         this.playerInventoryEnabled = playerInventoryEnabled;
+    }
+
+    public void setTransferItemsEnabled(boolean transferItemsEnabled) {
+        this.transferItemsEnabled = transferItemsEnabled;
     }
 
     @NotNull
