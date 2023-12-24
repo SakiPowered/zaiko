@@ -28,12 +28,6 @@ public class MenuListener implements Listener {
                 && event.getClickedInventory().getType() == InventoryType.PLAYER
                 && event.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) return;
 
-
-//        if(!canvas.isTransferItemsEnabled() && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY){
-//            Bukkit.getLogger().info(event.getCursor().getType().name());
-//            Bukkit.getLogger().info(event.getCurrentItem().getType().name());
-//        }
-
         Placeable placeable = getPlaceable(canvas, event.getSlot());
         if(placeable == null) {
             if(!canvas.isTransferItemsEnabled() && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && clickedInventory.getType() == InventoryType.PLAYER){
