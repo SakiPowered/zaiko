@@ -1,5 +1,6 @@
 package gg.saki.zaiko.menu;
 
+import gg.saki.zaiko.menu.templates.Template;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 
@@ -23,6 +24,9 @@ public abstract class Menu {
 
     public void open(Player player){
         Canvas canvas = new Canvas(this, player);
+        Template template = canvas.getTemplate();
+        if(template != null) template.build(canvas);
+
         this.build(canvas);
         player.openInventory(canvas.getInventory());
     }

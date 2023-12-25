@@ -1,6 +1,7 @@
 package gg.saki.zaiko.menu;
 
 import gg.saki.zaiko.menu.placeable.Placeable;
+import gg.saki.zaiko.menu.templates.Template;
 import gg.saki.zaiko.utils.Pair;
 import gg.saki.zaiko.utils.StringUtil;
 import lombok.Getter;
@@ -27,6 +28,8 @@ public class Canvas implements InventoryHolder {
 
     private boolean playerInventoryEnabled = false;
     private boolean transferItemsEnabled = false;
+
+    private Template template;
 
     public Canvas(Menu menu, Player player){
         this.menu = menu;
@@ -72,9 +75,17 @@ public class Canvas implements InventoryHolder {
         this.transferItemsEnabled = transferItemsEnabled;
     }
 
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
+
     @NotNull
     @Override
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    public Template getTemplate() {
+        return template;
     }
 }
