@@ -5,8 +5,10 @@ import gg.saki.zaiko.menu.Menu;
 import gg.saki.zaiko.menu.placeable.Button;
 import gg.saki.zaiko.menu.placeable.Icon;
 import gg.saki.zaiko.menu.placeable.Input;
+import gg.saki.zaiko.menu.placeable.Toggle;
 import gg.saki.zaiko.menu.templates.OuterFill;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ExampleMenu extends Menu {
@@ -21,9 +23,7 @@ public class ExampleMenu extends Menu {
         ctx.setTransferItemsEnabled(false);
 
         Button button = Button.builder().item(new ItemStack(Material.RED_BANNER))
-                .action(player -> {
-                    player.sendMessage("You clicked the button!");
-                })
+                .action(player -> player.sendMessage("You clicked the button!"))
                 .build();
 
         ctx.place(1,1, button);
@@ -37,5 +37,13 @@ public class ExampleMenu extends Menu {
         }).build();
 
         ctx.place(slot, input);
+
+        int toggleSlot = ctx.fromCoordinates(6, 1);
+        Toggle toggle = Toggle.builder().change((toggled, state) -> {
+            ctx.getPlayer().setAllowFlight(state);
+            toggled.setItem(new ItemStack(state ? Material.EMERALD : Material.REDSTONE));
+        }).state(ctx.getPlayer().getAllowFlight()).build();
+
+        ctx.place(toggleSlot, toggle);
     }
 }
