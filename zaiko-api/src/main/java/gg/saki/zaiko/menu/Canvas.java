@@ -56,7 +56,7 @@ public class Canvas implements InventoryHolder {
     }
 
     public int fromCoordinates(int x, int y){
-        return x + (9-y) * y;
+        return (y*9) + x;
     }
 
     public Inventory createInventory(InventoryHolder holder, InventoryType type, int rows, String title){

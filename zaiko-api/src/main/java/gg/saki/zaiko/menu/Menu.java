@@ -24,10 +24,15 @@ public abstract class Menu {
 
     public void open(Player player){
         Canvas canvas = new Canvas(this, player);
+        this.open(player, canvas);
+    }
+
+    public void open(Player player, Canvas canvas){
+        this.build(canvas);
+
         Template template = canvas.getTemplate();
         if(template != null) template.build(canvas);
 
-        this.build(canvas);
         player.openInventory(canvas.getInventory());
     }
 

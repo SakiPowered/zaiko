@@ -27,11 +27,7 @@ public abstract class PaginatedMenu<T> extends Menu {
     @Override
     public void open(Player player) {
         PaginatedCanvas<T> canvas = new PaginatedCanvas<>(this, data, pageSize, player);
-        Template template = canvas.getTemplate();
-        if(template != null) template.build(canvas);
-
-        this.build(canvas);
-        player.openInventory(canvas.getInventory());
+        this.open(player, canvas);
     }
 
     public void open(Player player, List<T> data, int pageSize) {
