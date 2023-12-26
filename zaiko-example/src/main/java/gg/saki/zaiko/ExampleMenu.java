@@ -7,6 +7,7 @@ import gg.saki.zaiko.menu.placeable.Icon;
 import gg.saki.zaiko.menu.placeable.Input;
 import gg.saki.zaiko.menu.placeable.Toggle;
 import gg.saki.zaiko.menu.templates.OuterFill;
+import gg.saki.zaiko.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +19,7 @@ public class ExampleMenu extends Menu {
 
     @Override
     public void build(Canvas ctx) {
-        ctx.setTemplate(new OuterFill(Icon.builder().item(new ItemStack(Material.GRAY_STAINED_GLASS_PANE)).build()));
+        ctx.setTemplate(new OuterFill(Icon.builder().item(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).meta().name("&7").finish().build()).build()));
         ctx.setPlayerInventoryEnabled(true);
         ctx.setTransferItemsEnabled(false);
 
@@ -31,7 +32,7 @@ public class ExampleMenu extends Menu {
         ctx.place(2, 1, Icon.builder().item(new ItemStack(Material.DIAMOND)).build());
 
         int slot = ctx.fromCoordinates(7,1);
-        Input input = Input.builder().item(new ItemStack(Material.COMPOSTER)).action(itemStack -> {
+        Input input = Input.builder().item(new ItemBuilder(Material.PLAYER_HEAD).meta().owner(ctx.getPlayer()).finish().build()).action(itemStack -> {
             //ctx.getInventory().setItem(slot, null);
             ctx.getPlayer().sendMessage("Collected " + itemStack.getType().name());
         }).build();
@@ -41,7 +42,11 @@ public class ExampleMenu extends Menu {
         int toggleSlot = ctx.fromCoordinates(6, 1);
         Toggle toggle = Toggle.builder().change((toggled, state) -> {
             ctx.getPlayer().setAllowFlight(state);
-            toggled.setItem(new ItemStack(state ? Material.EMERALD : Material.REDSTONE));
+
+            ItemStack item = new ItemBuilder(state ? Material.EMERALD : Material.REDSTONE).meta()
+                    .name(state ? "&aFlight" : "&cFlight")
+                    .lore("Aaa", "&bAaaaa").finish().build();
+            toggled.setItem(item);
         }).state(ctx.getPlayer().getAllowFlight()).build();
 
         ctx.place(toggleSlot, toggle);
