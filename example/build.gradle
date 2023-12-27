@@ -1,0 +1,18 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+archivesBaseName = 'zaiko-example'
+description('Example plugin for Zaiko')
+
+tasks.withType(ProcessResources).configureEach {
+    filteringCharset('UTF-8')
+
+    filesMatching('plugin.yml') {
+        expand(project.properties)
+    }
+}
+
+dependencies {
+    implementation(project.rootProject)
+}

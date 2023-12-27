@@ -1,4 +1,0 @@
-name: Zaiko-Example
-main: gg.saki.zaiko.ExamplePlugin
-version: @zaikoVersion@
-api-version: 1.17
