@@ -33,7 +33,6 @@ import gg.saki.zaiko.menu.placeable.Toggle;
 import gg.saki.zaiko.menu.templates.OuterFill;
 import gg.saki.zaiko.utils.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ExampleMenu extends Menu {
@@ -51,11 +50,11 @@ public class ExampleMenu extends Menu {
                 .action(player -> player.sendMessage("You clicked the button!"))
                 .build();
 
-        ctx.place(1,1, button);
+        ctx.place(1, 1, button);
 
         ctx.place(2, 1, Icon.builder().item(new ItemStack(Material.DIAMOND)).build());
 
-        int slot = ctx.fromCoordinates(7,1);
+        int slot = ctx.fromCoordinates(7, 1);
         Input input = Input.builder().item(new ItemBuilder(Material.PLAYER_HEAD).meta().owner(ctx.getPlayer()).finish().build()).action(itemStack -> {
             //ctx.getInventory().setItem(slot, null);
             ctx.getPlayer().sendMessage("Collected " + itemStack.getType().name());

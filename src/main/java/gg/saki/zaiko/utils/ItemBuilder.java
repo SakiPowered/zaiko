@@ -33,12 +33,12 @@ public class ItemBuilder {
     private ItemStack item;
     private ItemMetaBuilder<?> meta;
 
-    public ItemBuilder(Material material){
+    public ItemBuilder(Material material) {
         this.item = new ItemStack(material);
     }
 
-    public ItemMetaBuilder<?> meta(){
-        if(item.getType() == Material.PLAYER_HEAD){
+    public ItemMetaBuilder<?> meta() {
+        if (item.getType() == Material.PLAYER_HEAD) {
             this.meta = new ItemMetaBuilder<SkullMeta>(this, this.item);
             return this.meta;
         }
@@ -47,7 +47,7 @@ public class ItemBuilder {
         return this.meta;
     }
 
-    public ItemStack build(){
+    public ItemStack build() {
         this.item.setItemMeta(this.meta.getMeta());
         return this.item;
     }

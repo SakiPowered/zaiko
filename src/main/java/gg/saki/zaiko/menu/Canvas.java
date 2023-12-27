@@ -55,35 +55,35 @@ public class Canvas implements InventoryHolder {
 
     private Template template;
 
-    public Canvas(Menu menu, Player player){
+    public Canvas(Menu menu, Player player) {
         this.menu = menu;
         this.player = player;
         this.inventory = createInventory(this, menu.getType(), menu.getRows(), menu.getTitle());
         this.placeableMap = new HashMap<>();
     }
 
-    public void place(int slot, Placeable placeable){
+    public void place(int slot, Placeable placeable) {
         ItemStack item = placeable.getItem();
 
         this.placeableMap.put(slot, placeable);
         this.inventory.setItem(slot, item);
     }
 
-    public void place(int x, int y, Placeable placeable){
-        this.place(fromCoordinates(x,y), placeable);
+    public void place(int x, int y, Placeable placeable) {
+        this.place(fromCoordinates(x, y), placeable);
     }
 
-    public void place(List<Pair<Integer, Integer>> coordinates, Placeable placeable){
-        for(Pair<Integer, Integer> pair : coordinates){
+    public void place(List<Pair<Integer, Integer>> coordinates, Placeable placeable) {
+        for (Pair<Integer, Integer> pair : coordinates) {
             place(pair.getKey(), pair.getValue(), placeable);
         }
     }
 
-    public int fromCoordinates(int x, int y){
-        return (y*9) + x;
+    public int fromCoordinates(int x, int y) {
+        return (y * 9) + x;
     }
 
-    public Inventory createInventory(InventoryHolder holder, InventoryType type, int rows, String title){
+    public Inventory createInventory(InventoryHolder holder, InventoryType type, int rows, String title) {
         if (type == InventoryType.CHEST) {
             return Bukkit.createInventory(holder, (rows * 9), StringUtil.translate(title));
         } else {

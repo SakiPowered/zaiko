@@ -33,7 +33,9 @@ public interface Placeable {
 
     @NotNull ItemStack getItem();
 
-    default void click(InventoryClickEvent event){}
+    default void click(InventoryClickEvent event) {
+    }
 
-    default void drag(InventoryDragEvent event){}
+    default void drag(InventoryDragEvent event) {
+    }
 }

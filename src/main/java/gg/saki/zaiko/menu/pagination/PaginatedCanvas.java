@@ -45,19 +45,19 @@ public class PaginatedCanvas<T> extends Canvas {
         super(menu, player);
 
         List<Placeable> items = new ArrayList<>();
-        for(T data : pagination.stream().toList()){
+        for (T data : pagination.stream().toList()) {
             items.add(this.getMenu().getMapping(data));
         }
 
         this.pages = new Pagination<>(pageSize, items);
     }
 
-    public void setNextButton(int slot, Button next){
+    public void setNextButton(int slot, Button next) {
         this.place(slot, next);
         next.setAction(player -> changePage(1));
     }
 
-    public void setPreviousButton(int slot, Button previous){
+    public void setPreviousButton(int slot, Button previous) {
         this.place(slot, previous);
         previous.setAction(player -> changePage(-1));
     }
@@ -66,21 +66,21 @@ public class PaginatedCanvas<T> extends Canvas {
         this.slots = slots;
     }
 
-    public void populate(){
+    public void populate() {
         List<Placeable> placeables = this.pages.getPage(page);
         Iterator<Placeable> iterator = placeables.iterator();
 
-        for(int i : slots){
-            if(!iterator.hasNext()) break;
+        for (int i : slots) {
+            if (!iterator.hasNext()) break;
 
             this.place(i, iterator.next());
         }
     }
 
-    public void changePage(int amount){
-        if(!pages.exists(page+amount)) return;
+    public void changePage(int amount) {
+        if (!pages.exists(page + amount)) return;
 
-        page+=amount;
+        page += amount;
 
         this.getInventory().clear();
         this.getMenu().build(this);

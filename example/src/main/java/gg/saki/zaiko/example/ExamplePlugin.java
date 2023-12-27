@@ -27,10 +27,14 @@ package gg.saki.zaiko.example;
 import gg.saki.zaiko.MenuService;
 import gg.saki.zaiko.Zaiko;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public class ExamplePlugin extends JavaPlugin implements Listener {
 
@@ -39,20 +43,19 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.menuService = Zaiko.get(this);
+
         this.menuService.register(ExampleMenu.class, new ExampleMenu("Backpack", 3));
         this.menuService.register(ExamplePaginatedMenu.class, new ExamplePaginatedMenu("Players", 1));
 
-        Bukkit.getPluginManager().registerEvents(this, this);
     }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event){
-//        PaginatedMenu<Player> menu = menuService.get(ExamplePaginatedMenu.class);
-//        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-//
-//        menu.open(event.getPlayer(), players, 7);
-
-        ExampleMenu menu = menuService.get(ExampleMenu.class);
-        menu.open(event.getPlayer());
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (command.getName().equalsIgnoreCase("examplemenu") && sender instanceof Player player) {
+            ExampleMenu menu = menuService.get(ExampleMenu.class);
+            menu.open(player);
+        }
+        return true;
     }
+
 }

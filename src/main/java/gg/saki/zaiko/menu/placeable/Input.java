@@ -39,7 +39,7 @@ public class Input implements Placeable {
     private ItemStack item;
     private final Consumer<ItemStack> action;
 
-    public Input(ItemStack item, Consumer<ItemStack> action){
+    public Input(ItemStack item, Consumer<ItemStack> action) {
         this.original = item;
         this.item = item;
         this.action = action;
@@ -55,9 +55,9 @@ public class Input implements Placeable {
         Bukkit.getLogger().info(event.getAction().name());
         InventoryAction action = event.getAction();
 
-        if(!(event.getWhoClicked() instanceof Player player)) return;
+        if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        switch(action){
+        switch (action) {
             case SWAP_WITH_CURSOR -> {
                 event.setCancelled(true);
 
@@ -75,7 +75,7 @@ public class Input implements Placeable {
                 ItemStack picked = event.getCurrentItem();
                 Bukkit.getLogger().info(picked.getType().name());
 
-                if(original.equals(picked)){
+                if (original.equals(picked)) {
                     return;
                 }
 
@@ -86,12 +86,12 @@ public class Input implements Placeable {
                 event.setCancelled(true);
 
                 int hotbarSlot = event.getHotbarButton();
-                if(hotbarSlot < 0) return;
+                if (hotbarSlot < 0) return;
 
                 ItemStack hovered = event.getCurrentItem();
                 ItemStack swapped = player.getInventory().getItem(hotbarSlot);
 
-                if(original.equals(hovered)) {
+                if (original.equals(hovered)) {
                     event.setCurrentItem(swapped);
                     this.item = swapped;
                     this.action.accept(swapped);
@@ -109,10 +109,10 @@ public class Input implements Placeable {
 
                 ItemStack hovered = event.getCurrentItem();
 
-                if(original.equals(hovered)) return;
+                if (original.equals(hovered)) return;
 
                 int hotbarSlot = event.getHotbarButton();
-                if(hotbarSlot < 0) return;
+                if (hotbarSlot < 0) return;
 
                 player.getInventory().setItem(hotbarSlot, hovered);
                 event.getInventory().setItem(event.getSlot(), this.original);
@@ -123,7 +123,7 @@ public class Input implements Placeable {
         }
     }
 
-    public static InputBuilder builder(){
+    public static InputBuilder builder() {
         return new InputBuilder();
     }
 
@@ -131,17 +131,17 @@ public class Input implements Placeable {
         private ItemStack item;
         private Consumer<ItemStack> action;
 
-        public InputBuilder item(ItemStack item){
+        public InputBuilder item(ItemStack item) {
             this.item = item;
             return this;
         }
 
-        public InputBuilder action(Consumer<ItemStack> action){
+        public InputBuilder action(Consumer<ItemStack> action) {
             this.action = action;
             return this;
         }
 
-        public Input build(){
+        public Input build() {
             return new Input(this.item, this.action);
         }
 

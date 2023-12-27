@@ -58,16 +58,17 @@ public class Pagination<T> extends ArrayList<T> {
     }
 
     public List<T> getPage(int page) {
-        if(page < 0 || page >= totalPages()) throw new IndexOutOfBoundsException("Index: " + page + ", Size: " + totalPages());
+        if (page < 0 || page >= totalPages())
+            throw new IndexOutOfBoundsException("Index: " + page + ", Size: " + totalPages());
 
         List<T> objects = new ArrayList<>();
 
         int min = page * pageSize;
         int max = ((page * pageSize) + pageSize);
 
-        if(max > size()) max = size();
+        if (max > size()) max = size();
 
-        for(int i = min; max > i; i++)
+        for (int i = min; max > i; i++)
             objects.add(get(i));
 
         return objects;

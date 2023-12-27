@@ -25,7 +25,6 @@
 package gg.saki.zaiko.menu.placeable;
 
 import lombok.Builder;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
@@ -36,8 +35,10 @@ public class Icon implements Placeable {
 
     private ItemStack item;
 
-    @Builder.Default private boolean removable = false;
-    @Builder.Default private boolean draggable = false;
+    @Builder.Default
+    private boolean removable = false;
+    @Builder.Default
+    private boolean draggable = false;
 
     @Override
     public void click(InventoryClickEvent event) {

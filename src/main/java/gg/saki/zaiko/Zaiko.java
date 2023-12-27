@@ -24,19 +24,65 @@
 
 package gg.saki.zaiko;
 
-import com.google.common.base.Preconditions;
+import gg.saki.zaiko.menu.Menu;
+import gg.saki.zaiko.menu.MenuListener;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-@SuppressWarnings({"unused"})
-public class Zaiko {
+@SuppressWarnings({"unchecked", "unused"})
+public class Zaiko implements MenuService {
 
-    private static final ConcurrentHashMap<String, MenuService> services = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Zaiko> services = new ConcurrentHashMap<>();
 
-    public static MenuService get(@Nonnull JavaPlugin plugin){
-        Preconditions.checkNotNull(plugin, "Plugin cannot be null");
-        return services.computeIfAbsent(plugin.getName(), s -> new ZaikoMenuService(plugin));
+
+    private final JavaPlugin plugin;
+
+    private final Map<Class<? extends Menu>, Menu> menus = new HashMap<>();
+
+    private Zaiko(JavaPlugin plugin) {
+        this.plugin = plugin;
+
+        Bukkit.getPluginManager().registerEvents(new MenuListener(), plugin);
     }
+
+    @Override
+    public <T extends Menu> @NotNull T register(@NotNull Class<T> clazz, @NotNull Menu menu) {
+        this.menus.put(clazz, menu);
+        return (T) menu;
+    }
+
+    @Override
+    public <T extends Menu> @NotNull T get(@NotNull Class<T> clazz) {
+        Menu menu = this.menus.get(clazz);
+
+        if (menu == null) {
+            throw new IllegalArgumentException("Menu of type " + clazz.getSimpleName() + " is not registered");
+        }
+
+
+        return (T) menu;
+    }
+
+    @Override
+    public <T extends Menu> T unregister(@NotNull Class<T> type) {
+        return (T) this.menus.remove(type);
+    }
+
+    @Override
+    public void disable() {
+        this.menus.clear();
+    }
+
+    public static Zaiko get(@NotNull JavaPlugin plugin) {
+        return Zaiko.services.computeIfAbsent(plugin.getName(), s -> new Zaiko(plugin));
+    }
+
+
 }

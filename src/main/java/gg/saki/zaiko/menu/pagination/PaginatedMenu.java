@@ -27,7 +27,6 @@ package gg.saki.zaiko.menu.pagination;
 import gg.saki.zaiko.menu.Canvas;
 import gg.saki.zaiko.menu.Menu;
 import gg.saki.zaiko.menu.placeable.Placeable;
-import gg.saki.zaiko.menu.templates.Template;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 
@@ -42,7 +41,7 @@ public abstract class PaginatedMenu<T> extends Menu {
         super(title, rows, type);
     }
 
-    public PaginatedMenu(String title, int rows){
+    public PaginatedMenu(String title, int rows) {
         super(title, rows);
     }
 
@@ -61,7 +60,7 @@ public abstract class PaginatedMenu<T> extends Menu {
     }
 
     @SuppressWarnings("unchecked")
-    public PaginatedCanvas<T> getCanvas(Canvas canvas){
+    public PaginatedCanvas<T> getCanvas(Canvas canvas) {
         return (PaginatedCanvas<T>) canvas;
     }
 }

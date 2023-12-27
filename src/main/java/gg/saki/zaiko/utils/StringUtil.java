@@ -65,8 +65,7 @@ public class StringUtil {
     public static String translate(String message) {
         Matcher matcher = hexPattern.matcher(message);
         StringBuilder buffer = new StringBuilder(message.length() + 4 * 8);
-        while (matcher.find())
-        {
+        while (matcher.find()) {
             String group = matcher.group(1);
             matcher.appendReplacement(buffer, COLOR_CHAR + "x"
                     + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)

@@ -25,11 +25,16 @@
 package gg.saki.zaiko;
 
 import gg.saki.zaiko.menu.Menu;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface MenuService {
 
-    <T extends Menu> T register(Class<T> clazz, Menu menu);
+    <T extends Menu> @NotNull T register(@NotNull Class<T> clazz, @NotNull Menu menu);
 
-    <T extends Menu> T get(Class<T> clazz);
+    <T extends Menu> @NotNull T get(@NotNull Class<T> clazz);
+
+    <T extends Menu> T unregister(@NotNull Class<T> type);
+
+    void disable();
 }

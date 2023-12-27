@@ -34,33 +34,33 @@ public abstract class Menu {
     private final int rows;
     private final InventoryType type;
 
-    public Menu(String title, int rows, InventoryType type){
+    public Menu(String title, int rows, InventoryType type) {
         this.title = title;
         this.rows = rows;
         this.type = type;
     }
 
-    public Menu(String title, int rows){
+    public Menu(String title, int rows) {
         this(title, rows, InventoryType.CHEST);
     }
 
     public abstract void build(Canvas ctx);
 
-    public void open(Player player){
+    public void open(Player player) {
         Canvas canvas = new Canvas(this, player);
         this.open(player, canvas);
     }
 
-    public void open(Player player, Canvas canvas){
+    public void open(Player player, Canvas canvas) {
         this.build(canvas);
 
         Template template = canvas.getTemplate();
-        if(template != null) template.build(canvas);
+        if (template != null) template.build(canvas);
 
         player.openInventory(canvas.getInventory());
     }
 
-    public void close(Player player){
+    public void close(Player player) {
     }
 
     public String getTitle() {

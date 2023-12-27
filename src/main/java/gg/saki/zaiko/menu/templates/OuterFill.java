@@ -34,7 +34,7 @@ public class OuterFill extends Template {
 
     private final Placeable placeable;
 
-    public OuterFill(Placeable placeable){
+    public OuterFill(Placeable placeable) {
         this.placeable = placeable;
     }
 

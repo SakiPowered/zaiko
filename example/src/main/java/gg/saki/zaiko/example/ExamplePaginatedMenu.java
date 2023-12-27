@@ -46,7 +46,7 @@ public class ExamplePaginatedMenu extends PaginatedMenu<Player> {
         Button arrow = Button.builder().item(new ItemStack(Material.ARROW)).build();
         canvas.setNextButton(0, arrow);
         canvas.setPreviousButton(8, arrow);
-        canvas.setSlots(new int[]{1,2,3,4,5,6,7});
+        canvas.setSlots(new int[]{1, 2, 3, 4, 5, 6, 7});
 
         canvas.populate();
     }
