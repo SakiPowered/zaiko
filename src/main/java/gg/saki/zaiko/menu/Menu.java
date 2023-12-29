@@ -53,11 +53,14 @@ public abstract class Menu {
 
     public void open(Player player, Canvas canvas) {
         this.build(canvas);
-
-        Template template = canvas.getTemplate();
-        if (template != null) template.build(canvas);
+        this.applyTemplate(canvas);
 
         player.openInventory(canvas.getInventory());
+    }
+
+    public void applyTemplate(Canvas canvas){
+        Template template = canvas.getTemplate();
+        if (template != null) template.build(canvas);
     }
 
     public void close(Player player) {

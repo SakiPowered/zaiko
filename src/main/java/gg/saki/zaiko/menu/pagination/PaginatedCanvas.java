@@ -84,7 +84,7 @@ public class PaginatedCanvas<T> extends Canvas {
 
         this.getInventory().clear();
         this.getMenu().build(this);
-        this.populate();
+        this.getMenu().applyTemplate(this);
     }
 
     @SuppressWarnings("unchecked")
