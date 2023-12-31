@@ -24,6 +24,7 @@
 
 package gg.saki.zaiko.menu.placeable;
 
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
@@ -36,6 +37,7 @@ import java.util.function.Consumer;
 public class Input implements Placeable {
 
     private final ItemStack original;
+    @Setter
     private ItemStack item;
     private final Consumer<ItemStack> action;
 
