@@ -37,6 +37,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ExamplePlugin extends JavaPlugin implements Listener {
 
@@ -56,7 +57,7 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (command.getName().equalsIgnoreCase("examplemenu") && sender instanceof Player player) {
             ExamplePaginatedMenu menu = menuService.get(ExamplePaginatedMenu.class);
-            menu.open(player, new ArrayList<>(), 7);
+            menu.open(player, player.getDiscoveredRecipes().stream().collect(Collectors.toList()), 7);
         }
         return true;
     }

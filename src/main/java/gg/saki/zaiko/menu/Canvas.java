@@ -29,6 +29,7 @@ import gg.saki.zaiko.menu.templates.Template;
 import gg.saki.zaiko.utils.Pair;
 import gg.saki.zaiko.utils.StringUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -46,20 +47,51 @@ public class Canvas implements InventoryHolder {
 
     private final Menu menu;
     private final Player player;
-    private final Inventory inventory;
+    private Inventory inventory;
 
     private final Map<Integer, Placeable> placeableMap;
 
+    private String title;
+    private int rows;
+    private InventoryType type;
+
+    @Setter
     private boolean playerInventoryEnabled = false;
+    @Setter
     private boolean transferItemsEnabled = false;
 
+    @Getter
+    @Setter
     private Template template;
 
     public Canvas(Menu menu, Player player) {
         this.menu = menu;
+        this.title = menu.getTitle();
+        this.rows = menu.getRows();
+        this.type = menu.getType();
         this.player = player;
-        this.inventory = createInventory(this, menu.getType(), menu.getRows(), menu.getTitle());
+        this.inventory = build();
         this.placeableMap = new HashMap<>();
+    }
+
+    public void open(){
+        player.openInventory(this.getInventory());
+    }
+
+    public Inventory build(){
+        this.inventory = createInventory(this, this.getType(), this.getRows(), this.getTitle());
+        return this.inventory;
+    }
+
+    public void rename(String title){
+        this.title = title;
+        this.build();
+
+        for(Map.Entry<Integer, Placeable> entry : this.placeableMap.entrySet()){
+            this.getInventory().setItem(entry.getKey(), entry.getValue().getItem());
+        }
+
+        this.open();
     }
 
     public void place(int slot, Placeable placeable) {
@@ -91,25 +123,10 @@ public class Canvas implements InventoryHolder {
         }
     }
 
-    public void setPlayerInventoryEnabled(boolean playerInventoryEnabled) {
-        this.playerInventoryEnabled = playerInventoryEnabled;
-    }
-
-    public void setTransferItemsEnabled(boolean transferItemsEnabled) {
-        this.transferItemsEnabled = transferItemsEnabled;
-    }
-
-    public void setTemplate(Template template) {
-        this.template = template;
-    }
-
     @NotNull
     @Override
     public Inventory getInventory() {
         return this.inventory;
     }
 
-    public Template getTemplate() {
-        return template;
-    }
 }

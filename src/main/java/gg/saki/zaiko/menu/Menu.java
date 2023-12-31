@@ -57,7 +57,7 @@ public abstract class Menu {
         this.build(canvas);
         this.applyTemplate(canvas);
 
-        player.openInventory(canvas.getInventory());
+        canvas.open();
     }
 
     public void applyTemplate(Canvas canvas){

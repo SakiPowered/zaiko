@@ -30,29 +30,34 @@ import gg.saki.zaiko.menu.pagination.PaginatedMenu;
 import gg.saki.zaiko.menu.placeable.Button;
 import gg.saki.zaiko.menu.placeable.Icon;
 import gg.saki.zaiko.menu.placeable.Placeable;
+import gg.saki.zaiko.utils.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class ExamplePaginatedMenu extends PaginatedMenu<Player> {
+public class ExamplePaginatedMenu extends PaginatedMenu<NamespacedKey> {
     public ExamplePaginatedMenu(String title, int rows) {
         super(title, rows);
     }
 
     @Override
     public void build(Canvas ctx) {
-        PaginatedCanvas<Player> canvas = getCanvas(ctx);
+        PaginatedCanvas<NamespacedKey> canvas = getCanvas(ctx);
 
-        Button arrow = Button.builder().item(new ItemStack(Material.ARROW)).build();
-        canvas.setNextButton(0, arrow);
-        canvas.setPreviousButton(8, arrow);
+        canvas.rename("Page " + canvas.getPage());
+        Bukkit.getLogger().info(String.valueOf(canvas.getPages().size()));
+
+        canvas.setNextButton(8,  Button.builder().item(new ItemStack(Material.ARROW)).build());
+        canvas.setPreviousButton(0,  Button.builder().item(new ItemStack(Material.ARROW)).build());
         canvas.setSlots(new int[]{1, 2, 3, 4, 5, 6, 7});
 
         canvas.populate();
     }
 
     @Override
-    public Placeable getMapping(Player data) {
-        return Icon.builder().item(new ItemStack(Material.GUNPOWDER)).build();
+    public Placeable getMapping(NamespacedKey data) {
+        return Icon.builder().item(new ItemBuilder(Material.GUNPOWDER).meta().name(data.getKey()).finish().build()).build();
     }
 }
