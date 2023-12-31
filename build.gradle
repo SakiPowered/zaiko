@@ -15,7 +15,7 @@ allprojects {
     apply(plugin: 'org.cadixdev.licenser')
 
     group('gg.saki')
-    version('1.0.0-SNAPSHOT') // < change this version
+    version('1.0.1-SNAPSHOT') // < change this version
 
     java {
         toolchain {
