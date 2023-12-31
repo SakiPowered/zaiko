@@ -25,9 +25,11 @@
 package gg.saki.zaiko.menu;
 
 import gg.saki.zaiko.menu.templates.Template;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 
+@Getter
 public abstract class Menu {
 
     private final String title;
@@ -66,15 +68,4 @@ public abstract class Menu {
     public void close(Player player) {
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public InventoryType getType() {
-        return type;
-    }
 }

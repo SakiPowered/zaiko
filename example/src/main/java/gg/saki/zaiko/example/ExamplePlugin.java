@@ -36,6 +36,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 public class ExamplePlugin extends JavaPlugin implements Listener {
 
     private MenuService menuService;
@@ -47,13 +49,14 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
         this.menuService.register(ExampleMenu.class, new ExampleMenu("Backpack", 3));
         this.menuService.register(ExamplePaginatedMenu.class, new ExamplePaginatedMenu("Players", 1));
 
+        Bukkit.getPluginCommand("examplemenu").setExecutor(this);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (command.getName().equalsIgnoreCase("examplemenu") && sender instanceof Player player) {
-            ExampleMenu menu = menuService.get(ExampleMenu.class);
-            menu.open(player);
+            ExamplePaginatedMenu menu = menuService.get(ExamplePaginatedMenu.class);
+            menu.open(player, new ArrayList<>(), 7);
         }
         return true;
     }

@@ -28,6 +28,8 @@ import gg.saki.zaiko.menu.Canvas;
 import gg.saki.zaiko.menu.Menu;
 import gg.saki.zaiko.menu.placeable.Button;
 import gg.saki.zaiko.menu.placeable.Placeable;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -36,9 +38,12 @@ import java.util.List;
 
 public class PaginatedCanvas<T> extends Canvas {
 
+    @Getter
     private final Pagination<Placeable> pages;
+    @Setter
     private int[] slots;
 
+    @Getter
     private int page = 0;
 
     public PaginatedCanvas(Menu menu, List<T> pagination, int pageSize, Player player) {
@@ -62,11 +67,9 @@ public class PaginatedCanvas<T> extends Canvas {
         previous.setAction(player -> changePage(-1));
     }
 
-    public void setSlots(int[] slots) {
-        this.slots = slots;
-    }
-
     public void populate() {
+        if(!this.pages.exists(page)) return;
+
         List<Placeable> placeables = this.pages.getPage(page);
         Iterator<Placeable> iterator = placeables.iterator();
 
