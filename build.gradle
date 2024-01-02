@@ -1,21 +1,81 @@
 plugins {
-    id 'org.cadixdev.licenser' version '0.6.1' apply false
-    id 'io.freefair.lombok' version '8.4' apply false
+    id 'java-library'
     id 'maven-publish'
     id 'signing'
-    id 'java-library'
+    id 'org.cadixdev.licenser' version '0.6.1' apply false
+    id 'io.freefair.lombok' version '8.4' apply false
 }
 
-
-description('A Spigot Menu Library') // TODO: UPDATE THIS
-
-allprojects {
-    apply(plugin: 'java')
-    apply(plugin: 'io.freefair.lombok')
-    apply(plugin: 'org.cadixdev.licenser')
-
+subprojects {
     group('gg.saki')
     version('1.0.1-SNAPSHOT') // < change this version
+
+    apply(plugin: 'java-library')
+    apply(plugin: 'org.cadixdev.licenser')
+    apply(plugin: 'io.freefair.lombok')
+
+    // apply publish and signing plugins to all subprojects except example
+    if (!project.name.equals('example')) {
+        apply(plugin: 'maven-publish')
+        apply(plugin: 'signing')
+
+        java {
+            withSourcesJar()
+            withJavadocJar()
+        }
+
+        boolean isReleaseVersion = !this.version.toString().endsWith("SNAPSHOT")
+
+        publishing {
+            repositories {
+                maven {
+                    name = 'saki'
+                    url = isReleaseVersion ? 'https://repo.saki.gg/releases' : 'https://repo.saki.gg/snapshots'
+                    credentials(PasswordCredentials)
+                    authentication {
+                        basic(BasicAuthentication)
+                    }
+                }
+            }
+
+            publications {
+                main(MavenPublication) {
+                    from components.java
+
+                    pom {
+                        name = this.project.name
+                        description = this.project.description
+                        url = 'https://github.com/SakiPowered/zaiko'
+
+                        licenses {
+                            license {
+                                name = 'MIT License'
+                                url = 'https://opensource.org/licenses/MIT'
+                            }
+                        }
+
+                        scm {
+                            connection = 'scm:git:git://github.com/SakiPowered/zaiko.git'
+                            developerConnection = 'scm:git:ssh://github.com/SakiPowered/zaiko.git'
+                            url = 'https://github.com/SakiPowered/zaiko'
+                        }
+                    }
+                }
+            }
+        }
+
+        signing {
+            required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
+
+            String signingKeyId = findProperty("signingKeyId")
+            String signingKey = findProperty("signingKey")
+            String signingPassword = findProperty("signingPassword")
+            useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+
+            sign publishing.publications.main
+        }
+    }
+
 
     java {
         toolchain {
@@ -56,65 +116,4 @@ allprojects {
     lombok {
         version = '1.18.22'
     }
-}
-
-dependencies {
-    compileOnlyApi('org.jetbrains:annotations:24.0.1')
-}
-
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-boolean isReleaseVersion = !this.version.toString().endsWith("SNAPSHOT")
-
-publishing {
-    repositories {
-        maven {
-            name = 'saki'
-            url = isReleaseVersion ? 'https://repo.saki.gg/releases' : 'https://repo.saki.gg/snapshots'
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
-    }
-
-    publications {
-        main(MavenPublication) {
-            from components.java
-
-            pom {
-                name = this.project.name
-                description = this.project.description
-                url = 'https://github.com/SakiPowered/zaiko'
-
-                licenses {
-                    license {
-                        name = 'MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
-
-                scm {
-                    connection = 'scm:git:git://github.com/SakiPowered/zaiko.git'
-                    developerConnection = 'scm:git:ssh://github.com/SakiPowered/zaiko.git'
-                    url = 'https://github.com/SakiPowered/zaiko'
-                }
-            }
-        }
-    }
-}
-
-signing {
-    required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
-
-    String signingKeyId = findProperty("signingKeyId")
-    String signingKey = findProperty("signingKey")
-    String signingPassword = findProperty("signingPassword")
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-
-    sign publishing.publications.main
 }

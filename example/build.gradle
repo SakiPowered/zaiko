@@ -14,5 +14,5 @@ tasks.withType(ProcessResources).configureEach {
 }
 
 dependencies {
-    implementation(project.rootProject)
+    implementation(project(':api'))
 }

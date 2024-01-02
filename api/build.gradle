@@ -1,0 +1,6 @@
+archivesBaseName = 'zaiko'
+description('A Spigot Menu Library') // TODO: UPDATE THIS
+
+dependencies {
+    compileOnlyApi('org.jetbrains:annotations:24.0.1')
+}
