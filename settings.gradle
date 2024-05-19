@@ -1,3 +1,3 @@
 rootProject.name = 'zaiko'
 
-include('api', 'example')
+include('api', 'example', 'adventure', 'example-adventure')

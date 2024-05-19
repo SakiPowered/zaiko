@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-package gg.saki.zaiko.example;
+package gg.saki.zaiko.example.adventure;
 
 import gg.saki.zaiko.Menu;
 import gg.saki.zaiko.Zaiko;
+import gg.saki.zaiko.adventure.ComponentTitleHolder;
 import gg.saki.zaiko.placeables.impl.Button;
 import gg.saki.zaiko.placeables.impl.Icon;
 import gg.saki.zaiko.populators.impl.PaginatedPopulator;
@@ -35,6 +36,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
+
+import static gg.saki.zaiko.example.adventure.ExamplePlugin.colorize;
 
 public class ExamplePaginatedMenu extends Menu {
 
@@ -53,7 +56,7 @@ public class ExamplePaginatedMenu extends Menu {
 
     @Override
     public void build(@NotNull Player player) {
-        this.setTitle("Page " + (this.populator.getCurrentPage() + 1));
+        this.setTitle(ComponentTitleHolder.of(colorize("<gradient:aqua:dark_aqua>Page " + (this.populator.getCurrentPage() + 1))));
 
         if (this.populator.isEmpty()) {
             this.place(4, new Icon(new ItemBuilder(Material.BARRIER).name("No potion effects").build()));

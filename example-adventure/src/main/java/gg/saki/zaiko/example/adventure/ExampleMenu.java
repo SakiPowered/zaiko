@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-package gg.saki.zaiko.example;
+package gg.saki.zaiko.example.adventure;
 
 import gg.saki.zaiko.Zaiko;
 import gg.saki.zaiko.Menu;
+import gg.saki.zaiko.adventure.ComponentTitleHolder;
 import gg.saki.zaiko.placeables.Placeable;
 import gg.saki.zaiko.placeables.impl.Button;
 import gg.saki.zaiko.placeables.impl.Icon;
@@ -38,12 +39,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.saki.zaiko.example.ExamplePlugin.getMaterial;
+import static gg.saki.zaiko.example.adventure.ExamplePlugin.colorize;
+import static gg.saki.zaiko.example.adventure.ExamplePlugin.getMaterial;
 
 public class ExampleMenu extends Menu {
 
     public ExampleMenu(@NotNull Zaiko zaiko) {
-        super(zaiko, "Example Menu", 3 * 9);
+        super(zaiko, ComponentTitleHolder.of(colorize("<gradient:aqua:dark_aqua>Example Menu</gradient>")), 3 * 9);
 
         // settings
         Placeable pane = new Icon(new ItemBuilder(getMaterial("STAINED_GLASS_PANE", "CYAN_STAINED_GLASS_PANE")).name("").durability(9).build());

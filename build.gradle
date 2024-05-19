@@ -3,25 +3,46 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'org.cadixdev.licenser' version '0.6.1' apply false
-    id 'io.freefair.lombok' version '8.4' apply false
+}
+
+allprojects {
+    group('gg.saki')
 }
 
 subprojects {
-    group('gg.saki')
-    version('1.0.1-SNAPSHOT') // < change this version
-
     apply(plugin: 'java-library')
     apply(plugin: 'org.cadixdev.licenser')
-    apply(plugin: 'io.freefair.lombok')
+
+    boolean isExample = project.name == 'example' || project.name == 'example-adventure'
+    boolean isAdventure = project.name == 'adventure' || project.name == 'example-adventure'
+
+    java {
+        if (isAdventure) {
+            println("Applying Java 17 to $project.name")
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        } else {
+            println("Applying Java 8 to $project.name")
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
 
     // apply publish and signing plugins to all subprojects except example
-    if (!project.name.equals('example')) {
+    if (!isExample) {
         apply(plugin: 'maven-publish')
         apply(plugin: 'signing')
 
         java {
+            println("Applying source and javadoc jars to $project.name")
             withSourcesJar()
             withJavadocJar()
+        }
+
+        javadoc {
+            options {
+                links = ['https://docs.oracle.com/javase/17/docs/api', 'https://hub.spigotmc.org/javadocs/spigot', 'https://javadoc.io/doc/org.jetbrains/annotations/24.0.1']
+            }
         }
 
         boolean isReleaseVersion = !this.version.toString().endsWith("SNAPSHOT")
@@ -43,7 +64,11 @@ subprojects {
                     from components.java
 
                     pom {
-                        name = this.project.name
+                        groupId = this.project.group
+                        artifactId = this.project.archivesBaseName
+                        version = this.project.version
+
+                        name = this.project.archivesBaseName
                         description = this.project.description
                         url = 'https://github.com/SakiPowered/zaiko'
 
@@ -76,13 +101,6 @@ subprojects {
         }
     }
 
-
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
-    }
-
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
 
@@ -107,13 +125,25 @@ subprojects {
         mavenCentral()
         maven { url = 'https://oss.sonatype.org/content/repositories/central' }
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+        maven { url = 'https://repo.saki.gg/snapshots' } // for bungeecord-chat v1.8-SNAPSHOT
+
+        if (isAdventure) {
+            maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+        }
     }
 
     dependencies {
-        compileOnly('org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT')
-    }
+        if (!isAdventure) {
+            println("Applying spigot-api to $project.name")
+            compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT')
+            compileOnly('org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT')
+        }
 
-    lombok {
-        version = '1.18.22'
+        if (isAdventure) {
+            println("Applying paper-api to $project.name")
+            compileOnly('io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT')
+        }
+
+        compileOnly('org.jetbrains:annotations:24.0.1')
     }
 }

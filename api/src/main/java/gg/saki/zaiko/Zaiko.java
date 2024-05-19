@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Saki Powered
+ * Copyright (c) 2024 SakiPowered
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,65 +24,88 @@
 
 package gg.saki.zaiko;
 
-import gg.saki.zaiko.menu.Menu;
-import gg.saki.zaiko.menu.MenuListener;
-import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Objects;
+import java.util.UUID;
 
-@SuppressWarnings({"unchecked", "unused"})
-public class Zaiko implements MenuService {
+/**
+ * This class is responsible for keeping track of all open menus and cleaning them up when the plugin is disabled.
+ */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
+public class Zaiko {
 
-    private static final ConcurrentMap<String, Zaiko> services = new ConcurrentHashMap<>();
+    /**
+     * The providing plugin instance.
+     */
+    protected final @NotNull JavaPlugin plugin;
 
+    private final @NotNull MenuListener listener;
 
-    private final JavaPlugin plugin;
+    /**
+     * A map of all open menus, with the key being the UUID of the player and the value being the menu.
+     */
+    protected final Map<UUID, Menu> openMenus = new HashMap<>();
 
-    private final Map<Class<? extends Menu>, Menu> menus = new HashMap<>();
-
-    private Zaiko(JavaPlugin plugin) {
+    /**
+     * Creates a new instance of the Zaiko class, and registers the required event listeners.
+     * @param plugin the providing plugin instance
+     */
+    public Zaiko(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
+        this.listener = new MenuListener(this);
+        this.plugin.getServer().getPluginManager().registerEvents(this.listener, this.plugin);
+    }
 
-        Bukkit.getPluginManager().registerEvents(new MenuListener(), plugin);
+    /**
+     * @param uuid the UUID of the player
+     * @return the {@link Menu} instance that is currently open for the specified player, or null if there is no menu open
+     */
+    public @Nullable Menu getOpenMenu(@NotNull UUID uuid) {
+        return this.openMenus.get(uuid);
+    }
+
+    /**
+     * Cleans up all open menus.
+     * This method should be called when the plugin is disabled.
+     */
+    public void cleanup() {
+        this.openMenus.forEach((uuid, menu) -> {
+            Player player = this.plugin.getServer().getPlayer(uuid);
+
+            if (player != null) {
+                menu.close(player, null, false);
+            }
+        });
+
+        this.openMenus.clear();
+
+        HandlerList.unregisterAll(this.listener);
     }
 
     @Override
-    public <T extends Menu> @NotNull T register(@NotNull Class<T> clazz, @NotNull Menu menu) {
-        this.menus.put(clazz, menu);
-        return (T) menu;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Zaiko that = (Zaiko) o;
+        return Objects.equals(this.plugin, that.plugin)
+                && Objects.equals(this.openMenus, that.openMenus);
     }
 
     @Override
-    public <T extends Menu> @NotNull T get(@NotNull Class<T> clazz) {
-        Menu menu = this.menus.get(clazz);
-
-        if (menu == null) {
-            throw new IllegalArgumentException("Menu of type " + clazz.getSimpleName() + " is not registered");
-        }
-
-
-        return (T) menu;
+    public int hashCode() {
+        return Objects.hash(this.plugin, this.openMenus);
     }
 
     @Override
-    public <T extends Menu> T unregister(@NotNull Class<T> type) {
-        return (T) this.menus.remove(type);
+    public String toString() {
+        return "Zaiko{plugin=" + this.plugin + ", openMenus=" + this.openMenus + '}';
     }
-
-    @Override
-    public void disable() {
-        this.menus.clear();
-    }
-
-    public static Zaiko get(@NotNull JavaPlugin plugin) {
-        return Zaiko.services.computeIfAbsent(plugin.getName(), s -> new Zaiko(plugin));
-    }
-
-
 }

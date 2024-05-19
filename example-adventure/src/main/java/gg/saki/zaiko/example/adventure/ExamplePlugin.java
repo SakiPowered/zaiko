@@ -22,10 +22,12 @@
  * SOFTWARE.
  */
 
-package gg.saki.zaiko.example;
+package gg.saki.zaiko.example.adventure;
 
 import gg.saki.zaiko.Zaiko;
 import gg.saki.zaiko.Menu;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -109,5 +111,9 @@ public class ExamplePlugin extends JavaPlugin {
         }
 
         return Material.BARRIER;
+    }
+
+    public static @NotNull Component colorize(@NotNull String text) {
+        return MiniMessage.miniMessage().deserialize(text);
     }
 }
