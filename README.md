@@ -127,6 +127,55 @@ Menu menu = new ExampleMenu(javaPlugin);
 menu.open(player);
 ```
 
+Paginated Menus
+```java
+public class ExampleMenu extends Menu { 
+    
+  private final @NotNull PaginatedPopulator<PotionEffect> populator;  
+    
+  // Setup all non-player dependant menu content
+  public ExampleMenu(@NotNull Zaiko zaiko) {
+    // Provide the Zaiko instance, title and size
+    super(zaiko, "Example Menu", 3 * 9);
+
+    // Handles pages and the data to be used, aswell as the placeable mapping
+    this.populator = new PaginatedPopulator<>(1, 7, 7, player.getActivePotionEffects(), potionEffect -> {
+       ItemStack item = new ItemBuilder(Material.POTION).name(potionEffect.getType().getName()).build();
+
+       return new Icon(item);
+    });
+  }
+
+  @Override
+  public void build() {
+    this.setTitle("Page " + (this.populator.getCurrentPage() + 1));
+
+    if (this.populator.isEmpty()) {
+       this.place(4, new Icon(new ItemBuilder(Material.BARRIER).name("No potion effects").build()));
+       return;
+    }
+
+    // if we're on the first page, don't show the previous button
+    if (!this.populator.isFirstPage()) {
+       this.place(0, Button.builder()
+               .item(new ItemBuilder(Material.ARROW)
+                       .name("Previous page").build())
+               .action(p -> this.populator.changePage(this, p, -1)).build());
+    }
+
+    // if we're on the last page, don't show the next button
+    if (!this.populator.isLastPage()) {
+       this.place(8, Button.builder()
+               .item(new ItemBuilder(Material.ARROW)
+                       .name("Next page").build())
+               .action(p -> this.populator.changePage(this, p, 1)).build());        }
+
+    // lastly, populate the menu
+    this.populator.populate(this);
+  }
+}
+```
+
 ## Placeable Usage
 
 ### Icons
