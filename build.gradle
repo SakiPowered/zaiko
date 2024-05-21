@@ -9,6 +9,7 @@ allprojects {
     group('gg.saki')
 }
 
+
 subprojects {
     apply(plugin: 'java-library')
     apply(plugin: 'org.cadixdev.licenser')
@@ -45,59 +46,61 @@ subprojects {
             }
         }
 
-        boolean isReleaseVersion = !this.version.toString().endsWith("SNAPSHOT")
+        boolean isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
 
-        publishing {
-            repositories {
-                maven {
-                    name = 'saki'
-                    url = isReleaseVersion ? 'https://repo.saki.gg/releases' : 'https://repo.saki.gg/snapshots'
-                    credentials(PasswordCredentials)
-                    authentication {
-                        basic(BasicAuthentication)
+        afterEvaluate {
+            publishing {
+                repositories {
+                    maven {
+                        name = 'saki'
+                        url = isReleaseVersion ? 'https://repo.saki.gg/releases' : 'https://repo.saki.gg/snapshots'
+                        credentials(PasswordCredentials)
+                        authentication {
+                            basic(BasicAuthentication)
+                        }
                     }
                 }
-            }
 
-            publications {
-                main(MavenPublication) {
-                    from components.java
+                publications {
+                    main(MavenPublication) {
+                        from components.java
 
-                    pom {
-                        groupId = this.project.group
-                        artifactId = this.project.archivesBaseName
-                        version = this.project.version
+                        pom {
+                            groupId = project.group
+                            artifactId = project.archivesBaseName
+                            version = project.version
 
-                        name = this.project.archivesBaseName
-                        description = this.project.description
-                        url = 'https://github.com/SakiPowered/zaiko'
+                            name = project.archivesBaseName
+                            description = project.description
+                            url = 'https://github.com/SakiPowered/zaiko'
 
-                        licenses {
-                            license {
-                                name = 'MIT License'
-                                url = 'https://opensource.org/licenses/MIT'
+                            licenses {
+                                license {
+                                    name = 'MIT License'
+                                    url = 'https://opensource.org/licenses/MIT'
+                                }
+                            }
+
+                            scm {
+                                connection = 'scm:git:git://github.com/SakiPowered/zaiko.git'
+                                developerConnection = 'scm:git:ssh://github.com/SakiPowered/zaiko.git'
+                                url = 'https://github.com/SakiPowered/zaiko'
                             }
                         }
-
-                        scm {
-                            connection = 'scm:git:git://github.com/SakiPowered/zaiko.git'
-                            developerConnection = 'scm:git:ssh://github.com/SakiPowered/zaiko.git'
-                            url = 'https://github.com/SakiPowered/zaiko'
-                        }
                     }
                 }
             }
-        }
 
-        signing {
-            required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
+            signing {
+                required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
 
-            String signingKeyId = findProperty("signingKeyId")
-            String signingKey = findProperty("signingKey")
-            String signingPassword = findProperty("signingPassword")
-            useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+                String signingKeyId = findProperty("signingKeyId")
+                String signingKey = findProperty("signingKey")
+                String signingPassword = findProperty("signingPassword")
+                useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 
-            sign publishing.publications.main
+                sign publishing.publications.main
+            }
         }
     }
 
