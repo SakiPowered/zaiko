@@ -179,7 +179,7 @@ public class ExampleMenu extends Menu {
 ## Placeable Usage
 
 ### Icons
-Icons are used as blank items which have no additional functionality, and simple serve as a visual element in the container.
+Icons are used as blank items which have no additional functionality, and simply serves as a visual element in the container.
 
 ```java
 Icon icon = Icon.builder()
@@ -219,12 +219,6 @@ this.place(slot);
 Toggles are used to toggle between two states, true and false. Based on the state change, a response will be provided.
 
 ```java
-Toggle toggle = Toggle.builder()
-  // This is the default input item
-  .item(new ItemStack(Material.WOODEN_SWORD))
-  .action(item -> player.sendMessage("Collected " + itemStack.getType().name()))
-  .build();
-
 Toggle toggle = Toggle.builder()
   // State change logic and item is handled here
   .onChange((toggled, state) -> {
