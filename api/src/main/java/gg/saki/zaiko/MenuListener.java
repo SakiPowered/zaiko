@@ -137,7 +137,7 @@ public final class MenuListener implements Listener {
 
 
         if (!menu.settings().closeable()) {
-            Bukkit.getScheduler().runTaskLater(this.zaiko.plugin, () -> {
+            Bukkit.getScheduler().runTaskLater(this.zaiko.getPlugin(), () -> {
                 player.openInventory(event.getInventory());
             }, 1L);
 

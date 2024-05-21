@@ -41,11 +41,7 @@ import java.util.UUID;
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class Zaiko {
 
-    /**
-     * The providing plugin instance.
-     */
-    protected final @NotNull JavaPlugin plugin;
-
+    private final @NotNull JavaPlugin plugin;
     private final @NotNull MenuListener listener;
 
     /**
@@ -87,6 +83,13 @@ public class Zaiko {
         this.openMenus.clear();
 
         HandlerList.unregisterAll(this.listener);
+    }
+
+    /**
+     * @return the {@link JavaPlugin} instance that is providing this {@link Zaiko} instance
+     */
+    public @NotNull JavaPlugin getPlugin() {
+        return this.plugin;
     }
 
     @Override
