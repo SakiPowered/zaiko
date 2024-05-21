@@ -1,25 +1,103 @@
 plugins {
-    id 'org.cadixdev.licenser' version '0.6.1' apply false
-    id 'io.freefair.lombok' version '8.4' apply false
+    id 'java-library'
     id 'maven-publish'
     id 'signing'
-    id 'java-library'
+    id 'org.cadixdev.licenser' version '0.6.1' apply false
 }
 
-
-description('A Spigot Menu Library') // TODO: UPDATE THIS
-
 allprojects {
-    apply(plugin: 'java')
-    apply(plugin: 'io.freefair.lombok')
+    group('gg.saki')
+}
+
+subprojects {
+    apply(plugin: 'java-library')
     apply(plugin: 'org.cadixdev.licenser')
 
-    group('gg.saki')
-    version('1.0.1-SNAPSHOT') // < change this version
+    boolean isExample = project.name == 'example' || project.name == 'example-adventure'
+    boolean isAdventure = project.name == 'adventure' || project.name == 'example-adventure'
 
     java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
+        if (isAdventure) {
+            println("Applying Java 17 to $project.name")
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        } else {
+            println("Applying Java 8 to $project.name")
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+
+    // apply publish and signing plugins to all subprojects except example
+    if (!isExample) {
+        apply(plugin: 'maven-publish')
+        apply(plugin: 'signing')
+
+        java {
+            println("Applying source and javadoc jars to $project.name")
+            withSourcesJar()
+            withJavadocJar()
+        }
+
+        javadoc {
+            options {
+                links = ['https://docs.oracle.com/javase/17/docs/api', 'https://hub.spigotmc.org/javadocs/spigot', 'https://javadoc.io/doc/org.jetbrains/annotations/24.0.1']
+            }
+        }
+
+        boolean isReleaseVersion = !this.version.toString().endsWith("SNAPSHOT")
+
+        publishing {
+            repositories {
+                maven {
+                    name = 'saki'
+                    url = isReleaseVersion ? 'https://repo.saki.gg/releases' : 'https://repo.saki.gg/snapshots'
+                    credentials(PasswordCredentials)
+                    authentication {
+                        basic(BasicAuthentication)
+                    }
+                }
+            }
+
+            publications {
+                main(MavenPublication) {
+                    from components.java
+
+                    pom {
+                        groupId = this.project.group
+                        artifactId = this.project.archivesBaseName
+                        version = this.project.version
+
+                        name = this.project.archivesBaseName
+                        description = this.project.description
+                        url = 'https://github.com/SakiPowered/zaiko'
+
+                        licenses {
+                            license {
+                                name = 'MIT License'
+                                url = 'https://opensource.org/licenses/MIT'
+                            }
+                        }
+
+                        scm {
+                            connection = 'scm:git:git://github.com/SakiPowered/zaiko.git'
+                            developerConnection = 'scm:git:ssh://github.com/SakiPowered/zaiko.git'
+                            url = 'https://github.com/SakiPowered/zaiko'
+                        }
+                    }
+                }
+            }
+        }
+
+        signing {
+            required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
+
+            String signingKeyId = findProperty("signingKeyId")
+            String signingKey = findProperty("signingKey")
+            String signingPassword = findProperty("signingPassword")
+            useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+
+            sign publishing.publications.main
         }
     }
 
@@ -47,74 +125,25 @@ allprojects {
         mavenCentral()
         maven { url = 'https://oss.sonatype.org/content/repositories/central' }
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+        maven { url = 'https://repo.saki.gg/snapshots' } // for bungeecord-chat v1.8-SNAPSHOT
+
+        if (isAdventure) {
+            maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+        }
     }
 
     dependencies {
-        compileOnly('org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT')
-    }
-
-    lombok {
-        version = '1.18.22'
-    }
-}
-
-dependencies {
-    compileOnlyApi('org.jetbrains:annotations:24.0.1')
-}
-
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-boolean isReleaseVersion = !this.version.toString().endsWith("SNAPSHOT")
-
-publishing {
-    repositories {
-        maven {
-            name = 'saki'
-            url = isReleaseVersion ? 'https://repo.saki.gg/releases' : 'https://repo.saki.gg/snapshots'
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
-            }
+        if (!isAdventure) {
+            println("Applying spigot-api to $project.name")
+            compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT')
+            compileOnly('org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT')
         }
-    }
 
-    publications {
-        main(MavenPublication) {
-            from components.java
-
-            pom {
-                name = this.project.name
-                description = this.project.description
-                url = 'https://github.com/SakiPowered/zaiko'
-
-                licenses {
-                    license {
-                        name = 'MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
-
-                scm {
-                    connection = 'scm:git:git://github.com/SakiPowered/zaiko.git'
-                    developerConnection = 'scm:git:ssh://github.com/SakiPowered/zaiko.git'
-                    url = 'https://github.com/SakiPowered/zaiko'
-                }
-            }
+        if (isAdventure) {
+            println("Applying paper-api to $project.name")
+            compileOnly('io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT')
         }
+
+        compileOnly('org.jetbrains:annotations:24.0.1')
     }
-}
-
-signing {
-    required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
-
-    String signingKeyId = findProperty("signingKeyId")
-    String signingKey = findProperty("signingKey")
-    String signingPassword = findProperty("signingPassword")
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-
-    sign publishing.publications.main
 }

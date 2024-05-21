@@ -1,0 +1,7 @@
+name: Zaiko-Example-Adventure
+main: gg.saki.zaiko.example.adventure.ExamplePlugin
+version: ${version}
+api-version: 1.18
+commands:
+  openmenu:
+    usage: /<command>

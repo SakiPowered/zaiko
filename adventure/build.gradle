@@ -1,0 +1,7 @@
+archivesBaseName = 'zaiko-adventure'
+version = '2.0.0' // < change this version
+description = 'Adventure support for Zaiko titles'
+
+dependencies {
+    compileOnly(project(':api'))
+}
