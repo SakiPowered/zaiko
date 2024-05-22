@@ -114,7 +114,7 @@ public final class MenuListener implements Listener {
 
         ItemStack cursor = event.getOldCursor();
 
-        for (Placeable placeable : menu.placeables) {
+        for (Placeable placeable : menu.getPlaceableArray()) {
             if (placeable == null) continue;
 
             ItemStack item = placeable.getItem();

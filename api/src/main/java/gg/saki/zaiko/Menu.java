@@ -32,6 +32,7 @@ import gg.saki.zaiko.utils.title.TitleHolder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +52,7 @@ public abstract class Menu {
     /**
      * The {@link Placeable}s in the menu. The index of the array represents the slot in the menu.
      */
-    protected @Nullable Placeable @NotNull [] placeables;
+    private @Nullable Placeable @NotNull [] placeables;
 
     private final @NotNull Settings settings;
 
@@ -337,6 +338,14 @@ public abstract class Menu {
         }
 
         return placeables;
+    }
+
+    /**
+     * @return the {@link Placeable} array that represents the menu's placeables
+     */
+    @ApiStatus.Internal
+    protected final @Nullable Placeable @NotNull [] getPlaceableArray() {
+        return this.placeables;
     }
 
     /**
