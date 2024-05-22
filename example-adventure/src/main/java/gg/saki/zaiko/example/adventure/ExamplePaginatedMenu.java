@@ -68,7 +68,7 @@ public class ExamplePaginatedMenu extends Menu {
             this.place(0, Button.builder()
                     .item(new ItemBuilder(Material.ARROW)
                             .name("Previous page").build())
-                    .action(p -> this.populator.changePage(this, p, -1)).build());
+                    .action((p, e) -> this.populator.changePage(this, p, -1)).build());
         }
 
         // if we're on the last page, don't show the next button
@@ -76,7 +76,7 @@ public class ExamplePaginatedMenu extends Menu {
             this.place(8, Button.builder()
                     .item(new ItemBuilder(Material.ARROW)
                             .name("Next page").build())
-                    .action(p -> this.populator.changePage(this, p, 1)).build());        }
+                    .action((p, e) -> this.populator.changePage(this, p, 1)).build());        }
 
         // lastly, populate the menu
         this.populator.populate(this);

@@ -32,6 +32,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -41,7 +42,7 @@ import java.util.function.Consumer;
 public class Button implements Placeable {
 
     private final @NotNull ItemStack item;
-    private @NotNull Consumer<Player> action;
+    private final @NotNull BiConsumer<Player, InventoryClickEvent> action;
 
     /**
      * Creates a new button with the specified item and action.
@@ -49,7 +50,7 @@ public class Button implements Placeable {
      * @param item the item to display as the button
      * @param action the action to execute when the button is clicked
      */
-    public Button(@NotNull ItemStack item, @NotNull Consumer<Player> action) {
+    public Button(@NotNull ItemStack item, @NotNull BiConsumer<Player, InventoryClickEvent> action) {
         this.item = item;
         this.action = action;
     }
@@ -61,7 +62,7 @@ public class Button implements Placeable {
      * @param item the item to display as the button
      */
     public Button(@NotNull ItemStack item) {
-        this(item, player -> {});
+        this(item, (player, event) -> {});
     }
 
 
@@ -71,7 +72,7 @@ public class Button implements Placeable {
 
         Player player = (Player) event.getWhoClicked();
 
-        this.action.accept(player);
+        this.action.accept(player, event);
 
         event.setCancelled(true);
     }
@@ -89,16 +90,8 @@ public class Button implements Placeable {
     /**
      * @return the action to execute when the button is clicked
      */
-    public @NotNull Consumer<Player> getAction() {
+    public @NotNull BiConsumer<Player, InventoryClickEvent> getAction() {
         return this.action;
-    }
-
-    /**
-     * Sets the action to execute when the button is clicked
-     * @param action the action to execute
-     */
-    public void setAction(@NotNull Consumer<Player> action) {
-        this.action = action;
     }
 
 
@@ -136,10 +129,10 @@ public class Button implements Placeable {
      */
     public static class Builder {
         private ItemStack item;
-        private Consumer<Player> action;
+        private BiConsumer<Player, InventoryClickEvent> action;
 
         private Builder() {
-            this.action = player -> {};
+            this.action = (player, event) -> {};
         }
 
         /**
@@ -159,7 +152,7 @@ public class Button implements Placeable {
          * @param action the action to execute
          * @return this {@link Button.Builder} instance
          */
-        public Button.Builder action(@NotNull Consumer<Player> action) {
+        public Button.Builder action(@NotNull BiConsumer<Player, InventoryClickEvent> action) {
             this.action = action;
             return this;
         }

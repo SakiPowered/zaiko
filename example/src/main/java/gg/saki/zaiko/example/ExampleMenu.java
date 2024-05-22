@@ -59,7 +59,7 @@ public class ExampleMenu extends Menu {
     @Override
     public void build(@NotNull Player player) {
         Button button = Button.builder().item(new ItemBuilder(Material.CAKE).name("Button").build())
-                .action(p -> p.sendMessage("You clicked the button!"))
+                .action((p, event) -> p.sendMessage("You " + event.getClick().name() + "_CLICKED the button!"))
                 .build();
 
         this.place(10, button);
@@ -85,7 +85,7 @@ public class ExampleMenu extends Menu {
         this.place(6, 1, toggle);
 
         Button close = Button.builder().item(new ItemBuilder(Material.BARRIER).name("Close").build())
-                .action(p -> this.close(player))
+                .action((p, event) -> this.close(player))
                 .build();
 
         this.place(4, 2, close);
