@@ -4,6 +4,9 @@
     <a href="https://repo.saki.gg/#/releases/gg/saki/zaiko">
       <img src="https://repo.saki.gg/api/badge/latest/releases/gg/saki/zaiko?color=EE83DA&name=zaiko&prefix=v" alt="zaiko release badge"/>
     </a>
+    <a href="https://repo.saki.gg/#/releases/gg/saki/zaiko-adventure">
+      <img src="https://repo.saki.gg/api/badge/latest/releases/gg/saki/zaiko-adventure?color=EE83DA&name=zaiko-adventure&prefix=v" alt="zaiko-adventure release badge"/>
+    </a>
 
 </div>
 
@@ -110,11 +113,13 @@ public class ExampleMenu extends Menu {
 
     // Assign all placeables which should be displayed in the menu, player-dependant.
     Button button = Button.builder().item(new ItemBuilder(Material.CAKE).name("Button").build())
-      .action(p -> p.sendMessage("You clicked the button!"))
+      .action((p, event) -> p.sendMessage("You clicked the button!"))
       .build();
 
-    // Place each placeable instance using either the slot, or x and y coordinates.
+    // Place each placeable instance using either the slot
     this.place(10, button);
+    // or with x and y coordinates (starting from 0,0 at the top left).
+    this.place(1, 1, button);
   }
 }
 ```
@@ -160,7 +165,7 @@ public class ExampleMenu extends Menu {
        this.place(0, Button.builder()
                .item(new ItemBuilder(Material.ARROW)
                        .name("Previous page").build())
-               .action(p -> this.populator.changePage(this, p, -1)).build());
+               .action((p, e) -> this.populator.changePage(this, p, -1)).build());
     }
 
     // if we're on the last page, don't show the next button
@@ -168,7 +173,7 @@ public class ExampleMenu extends Menu {
        this.place(8, Button.builder()
                .item(new ItemBuilder(Material.ARROW)
                        .name("Next page").build())
-               .action(p -> this.populator.changePage(this, p, 1)).build());        }
+               .action((p, e) -> this.populator.changePage(this, p, 1)).build());        }
 
     // lastly, populate the menu
     this.populator.populate(this);
@@ -196,7 +201,7 @@ Buttons are used as clickable items which trigger an action when any click is de
 ```java
 Button button = Button.builder()
   .item(new ItemStack(Material.CAKE))
-  .action(player -> player.sendMessage("Player clicker is provided"))
+  .action((player, event) -> player.sendMessage("Player clicker is provided"))
   .build();
 
 this.place(slot);
