@@ -34,21 +34,32 @@ subprojects {
         apply(plugin: 'maven-publish')
         apply(plugin: 'signing')
 
-        java {
-            println("Applying source and javadoc jars to $project.name")
-            withSourcesJar()
-            withJavadocJar()
-        }
-
-        javadoc {
-            options {
-                links = ['https://docs.oracle.com/javase/17/docs/api', 'https://hub.spigotmc.org/javadocs/spigot', 'https://javadoc.io/doc/org.jetbrains/annotations/24.0.1']
-            }
-        }
-
         boolean isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
 
         afterEvaluate {
+            java {
+                println("Applying source and javadoc jars to $project.name")
+                withSourcesJar()
+                withJavadocJar()
+            }
+
+            javadoc {
+                options {
+                    def mainLinks = ['https://docs.oracle.com/javase/17/docs/api', 'https://hub.spigotmc.org/javadocs/spigot', 'https://javadoc.io/doc/org.jetbrains/annotations/24.0.1']
+
+                    if (isAdventure) {
+                        mainLinks.add('https://jd.papermc.io/paper/1.18')
+                        mainLinks.add('https://jd.advntr.dev/api/4.17.0')
+                        //mainLinks.add()
+                        dependsOn(project(':api').tasks.javadoc)
+                        linksOffline = [new JavadocOfflineLink('https://repo.saki.gg/javadoc/releases/gg/saki/zaiko/' + project.version + '/raw', project(':api').buildDir.path + '/docs/javadoc')]
+                    }
+
+                    links = mainLinks
+
+                }
+            }
+
             publishing {
                 repositories {
                     maven {
