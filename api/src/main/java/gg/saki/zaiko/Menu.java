@@ -224,6 +224,8 @@ public abstract class Menu {
 
     /**
      * Places a {@link Placeable} in the specified slot using x and y coordinates.
+     * This only works for menus with {@link InventoryType}s of {@link InventoryType#CHEST}.
+     *
      * @param x the x coordinate of the slot (starting from 0)
      * @param y the y coordinate of the slot (starting from 0)
      * @param placeable the placeable to place
@@ -234,6 +236,8 @@ public abstract class Menu {
 
     /**
      * Places a {@link Placeable} in the specified slots. The coordinates are represented as a list of {@link IntPair}s.
+     * This only works for menus with {@link InventoryType}s of {@link InventoryType#CHEST}.
+     *
      * @param coordinates the coordinates to place the item in
      * @param placeable the placeable to place
      */
@@ -245,6 +249,8 @@ public abstract class Menu {
 
     /**
      * Gets the slot index from the specified x and y coordinates.
+     * This only works for menus with {@link InventoryType}s of {@link InventoryType#CHEST}.
+     *
      * @param x the x coordinate (starting from 0)
      * @param y the y coordinate (starting from 0)
      * @return the slot index
