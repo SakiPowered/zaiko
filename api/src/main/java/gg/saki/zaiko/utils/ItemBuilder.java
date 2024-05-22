@@ -132,10 +132,8 @@ public class ItemBuilder {
      * @param durability the durability value
      * @return this {@link ItemBuilder} instance
      */
-    @SuppressWarnings("deprecation")
     public ItemBuilder durability(int durability) {
-        this.item.setDurability((short) durability);
-        return this;
+        return this.durability((short) durability);
     }
 
 
