@@ -60,6 +60,7 @@ public final class MenuListener implements Listener {
         Inventory clickedInventory = event.getClickedInventory();
 
         if (clickedInventory == null) {
+            event.setCancelled(true);
             return;
         }
 
