@@ -33,9 +33,6 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The main listener for handling interactions with {@link Menu}s.
  */
@@ -58,36 +55,22 @@ public final class MenuListener implements Listener {
 
         if (menu == null) return;
 
+        Inventory inventory = event.getInventory();
+
         Inventory clickedInventory = event.getClickedInventory();
 
         if (clickedInventory == null) {
             return;
         }
 
-        if (menu.settings().playerInventoryInteraction()
-                && clickedInventory.getType() == InventoryType.PLAYER) return;
-
-        Placeable placeable = menu.getPlaceable(event.getSlot());
+        Placeable placeable = menu.getPlaceable(event.getRawSlot());
 
         if (placeable != null) {
             placeable.click(event);
             return;
         }
 
-
-        if (!menu.settings().transferItems()) {
-            if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && clickedInventory.getType() == InventoryType.PLAYER) {
-                event.setCancelled(true);
-                event.setCursor(null);
-                return;
-            }
-
-            if (clickedInventory.getType() != InventoryType.PLAYER) {
-                event.setCancelled(true);
-                player.getInventory().addItem(event.getCursor());
-                event.setCursor(null);
-            }
-        }
+        event.setCancelled(true);
     }
 
 
@@ -100,17 +83,6 @@ public final class MenuListener implements Listener {
         Menu menu = this.zaiko.getOpenMenu(player.getUniqueId());
 
         if (menu == null) return;
-
-        Inventory inventory = event.getInventory();
-
-
-        List<Integer> slots = new ArrayList<>(event.getInventorySlots());
-        if (!menu.settings().transferItems() && inventory.getType() != InventoryType.PLAYER && inventory.getItem(slots.get(0)) == null) {
-            event.setCancelled(true);
-            player.getInventory().addItem(event.getOldCursor());
-            event.setCursor(null);
-            return;
-        }
 
         ItemStack cursor = event.getOldCursor();
 
