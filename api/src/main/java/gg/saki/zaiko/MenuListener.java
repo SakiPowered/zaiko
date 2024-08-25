@@ -28,8 +28,12 @@ import gg.saki.zaiko.placeables.Placeable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -119,5 +123,20 @@ public final class MenuListener implements Listener {
 
         // internal close/cleanup
         menu.close(player, event.getInventory(), true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onOpen(InventoryOpenEvent event) {
+        if (!(event.getPlayer() instanceof Player)) return;
+
+        Player player = (Player) event.getPlayer();
+
+        Menu menu = this.zaiko.getOpenMenu(player.getUniqueId());
+
+        if (menu == null) return;
+
+        if(!event.isCancelled()) return;
+
+        this.zaiko.openMenus.remove(player.getUniqueId());
     }
 }

@@ -166,9 +166,9 @@ public abstract class Menu {
             inventory.setItem(i, placeable.getItem());
         }
 
-        player.openInventory(inventory);
-
         this.zaiko.openMenus.put(player.getUniqueId(), this);
+
+        player.openInventory(inventory);
     }
 
 
