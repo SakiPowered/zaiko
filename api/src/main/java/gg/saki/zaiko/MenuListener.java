@@ -59,8 +59,6 @@ public final class MenuListener implements Listener {
 
         if (menu == null) return;
 
-        Inventory inventory = event.getInventory();
-
         Inventory clickedInventory = event.getClickedInventory();
 
         if (clickedInventory == null) {
