@@ -26,10 +26,10 @@ package gg.saki.zaiko.populators.impl;
 
 import gg.saki.zaiko.Menu;
 import gg.saki.zaiko.placeables.Placeable;
-import gg.saki.zaiko.placeables.impl.Icon;
 import gg.saki.zaiko.populators.Populator;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,11 +40,11 @@ public class Collector implements Populator {
 
     private int @NotNull [] dataSlots;
 
-    private @NotNull List<ItemStack> data;
+    private List<ItemStack> data;
 
     private final Predicate<ItemStack> acceptable;
 
-    public Collector(int @NotNull [] dataSlots, @NotNull List<ItemStack> data, Predicate<ItemStack> acceptable) {
+    public Collector(int @NotNull [] dataSlots, @Nullable List<ItemStack> data, Predicate<ItemStack> acceptable) {
         this.dataSlots = dataSlots;
         this.data = data;
         this.acceptable = acceptable;
@@ -55,10 +55,10 @@ public class Collector implements Populator {
 
         for (int slot : this.dataSlots) {
             Placeable placeable = menu.getPlaceable(slot);
-            if(placeable == null) continue;
+            if (placeable == null) continue;
 
             ItemStack item = placeable.getItem();
-            if(!this.acceptable.test(item)) continue;
+            if (!this.acceptable.test(item)) continue;
 
             this.data.add(item);
         }
@@ -66,8 +66,18 @@ public class Collector implements Populator {
         return this.data;
     }
 
+    public void clear(@NotNull Menu menu) {
+        for (int slot : this.dataSlots) {
+            menu.removeItem(slot);
+        }
+
+        this.data = null;
+    }
+
     @Override
     public void populate(@NotNull Menu menu) {
+        if(this.data == null) return;
+
         Iterator<ItemStack> iterator = this.data.iterator();
 
         for (int slot : this.dataSlots) {

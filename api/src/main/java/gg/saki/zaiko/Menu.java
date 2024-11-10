@@ -357,6 +357,14 @@ public abstract class Menu {
         this.unstableInventory.setItem(slot, item);
     }
 
+    public void removeItem(int slot) {
+        if (this.unstableInventory == null) return;
+
+        if (this.containsPlaceable(slot)) return;
+
+        this.unstableInventory.setItem(slot, null);
+    }
+
     /**
      * Gets whether the specified slot contains a {@link Placeable}.
      *

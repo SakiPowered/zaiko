@@ -64,6 +64,7 @@ public class CollectorMenu extends Menu {
     public void build(@NotNull Player player) {
         this.place(4, 3, Button.builder().item(new ItemStack(Material.REDSTONE)).action((p, e) -> {
             List<ItemStack> items = this.collector.collect(this);
+            this.collector.clear(this);
 
             p.sendMessage("Size: " + items.size());
 
