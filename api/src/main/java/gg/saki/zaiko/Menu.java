@@ -24,6 +24,7 @@
 
 package gg.saki.zaiko;
 
+import gg.saki.zaiko.placeables.IconAdapter;
 import gg.saki.zaiko.placeables.Placeable;
 import gg.saki.zaiko.templates.Template;
 import gg.saki.zaiko.utils.ints.Int2ObjectPair;
@@ -32,6 +33,7 @@ import gg.saki.zaiko.utils.title.TitleHolder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,6 +61,10 @@ public abstract class Menu {
     private @Nullable Set<Template> templates;
 
 
+    /**
+     * DO NOT USE OUTSIDE OF GIVEN METHODS.
+     */
+    private Inventory unstableInventory;
 
 
     /**
@@ -133,12 +139,14 @@ public abstract class Menu {
 
     /**
      * Builds the menu's components and prepares it for opening.
+     *
      * @param player the player that will be viewing the menu
      */
     public abstract void build(@NotNull Player player);
 
     /**
      * Opens the menu for the specified player.
+     *
      * @param player the player to open the menu for
      */
     public final void open(@NotNull Player player) {
@@ -152,11 +160,10 @@ public abstract class Menu {
             }
         }
 
-        this.build(player);
-
-
-
         Inventory inventory = this.createInventory(this.type, this.size);
+        this.unstableInventory = inventory;
+
+        this.build(player);
 
         for (int i = 0; i < this.placeables.length; i++) {
             Placeable placeable = this.placeables[i];
@@ -176,6 +183,7 @@ public abstract class Menu {
 
     /**
      * Closes the menu for the specified player.
+     *
      * @param player the player to close the menu for
      */
     public void onClose(@NotNull Player player) {
@@ -184,18 +192,21 @@ public abstract class Menu {
 
     /**
      * Closes the menu for the specified player.
+     *
      * @param player the player to close the menu for
      */
     public final void close(@NotNull Player player) {
         this.settings.closeable(true);
+        this.unstableInventory = null;
         player.closeInventory();
     }
 
     /**
      * Closes the menu for the specified player.
-     * @param player the player to close the menu for
+     *
+     * @param player          the player to close the menu for
      * @param closedInventory the inventory that was closed, or null if there wasn't an inventory to close
-     * @param force whether to remove the player from the open menus map
+     * @param force           whether to remove the player from the open menus map
      */
     protected final void close(@NotNull Player player, @Nullable Inventory closedInventory, boolean force) {
         this.onClose(player);
@@ -217,7 +228,8 @@ public abstract class Menu {
 
     /**
      * Places a {@link Placeable} in the specified slot.
-     * @param slot the slot to place the item in (starting from 0)
+     *
+     * @param slot      the slot to place the item in (starting from 0)
      * @param placeable the placeable to place
      */
     public void place(int slot, @NotNull Placeable placeable) {
@@ -228,8 +240,8 @@ public abstract class Menu {
      * Places a {@link Placeable} in the specified slot using x and y coordinates.
      * This only works for menus with {@link InventoryType}s of {@link InventoryType#CHEST}.
      *
-     * @param x the x coordinate of the slot (starting from 0)
-     * @param y the y coordinate of the slot (starting from 0)
+     * @param x         the x coordinate of the slot (starting from 0)
+     * @param y         the y coordinate of the slot (starting from 0)
      * @param placeable the placeable to place
      */
     public void place(int x, int y, @NotNull Placeable placeable) {
@@ -241,7 +253,7 @@ public abstract class Menu {
      * This only works for menus with {@link InventoryType}s of {@link InventoryType#CHEST}.
      *
      * @param coordinates the coordinates to place the item in
-     * @param placeable the placeable to place
+     * @param placeable   the placeable to place
      */
     public void place(@NotNull List<IntPair> coordinates, @NotNull Placeable placeable) {
         for (IntPair pair : coordinates) {
@@ -263,6 +275,7 @@ public abstract class Menu {
 
     /**
      * Adds a {@link Template} to the menu. Templates are used to apply a set of changes to the menu.
+     *
      * @param template the template to add
      */
     public void addTemplate(@NotNull Template template) {
@@ -312,26 +325,59 @@ public abstract class Menu {
 
     /**
      * Gets the {@link Placeable} in the specified slot.
+     *
      * @param slot the slot to get the placeable from
-     * @return the placeable in the slot, or null if there is no placeable in the specified slot
+     * @return the placeable in the slot, an Icon if there is no placeable in the specified slot, or null if no item
      */
     public @Nullable Placeable getPlaceable(int slot) {
         if (slot < 0 || slot >= this.placeables.length) return null;
 
-        return this.placeables[slot];
+        Placeable placeable = this.placeables[slot];
+        if (placeable == null) {
+            ItemStack item = this.getItem(slot);
+            if (item == null) return null;
+
+            placeable = IconAdapter.adapt(item);
+        }
+
+        return placeable;
+    }
+
+    public @Nullable ItemStack getItem(int slot) {
+        if (this.unstableInventory == null) return null;
+
+        return this.unstableInventory.getItem(slot);
+    }
+
+    public void insertItem(int slot, ItemStack item) {
+        if (this.unstableInventory == null) return;
+
+        if (this.containsPlaceable(slot)) return;
+
+        this.unstableInventory.setItem(slot, item);
     }
 
     /**
      * Gets whether the specified slot contains a {@link Placeable}.
+     *
      * @param slot the slot to check
      * @return true if the slot contains a placeable, false otherwise
      */
     public boolean containsPlaceable(int slot) {
-        return this.getPlaceable(slot) != null;
+        return this.placeables[slot] != null;
+    }
+
+    public boolean canTransfer(int slot) {
+        if (!this.settings().transferItems()) return false;
+
+        if (this.settings().transferSlots() == null) return true;
+
+        return Arrays.stream(this.settings().transferSlots()).anyMatch(value -> value == slot);
     }
 
     /**
      * Gets a <i>copy</i> of all the {@link Placeable}s in the menu. The list contains pairs of the slot index and the placeable.
+     *
      * @return a list of all the placeables in the menu
      */
     public @NotNull List<Int2ObjectPair<Placeable>> getPlaceables() {
@@ -372,6 +418,7 @@ public abstract class Menu {
 
     /**
      * Sets the title of the menu. The menu will need to be rebuilt for the title to be updated.
+     *
      * @param title the title to set
      */
     public void setTitle(@NotNull TitleHolder title) {
@@ -380,6 +427,7 @@ public abstract class Menu {
 
     /**
      * Sets the title of the menu. The menu will need to be rebuilt for the title to be updated.
+     *
      * @param title the title to set, as a string
      */
     public void setTitle(@NotNull String title) {
@@ -388,6 +436,7 @@ public abstract class Menu {
 
     /**
      * Sets the templates that are applied to the menu.
+     *
      * @param templates the templates to set, or null if there should be no templates
      */
     public void setTemplates(@Nullable Set<Template> templates) {
@@ -402,11 +451,14 @@ public abstract class Menu {
         private boolean transferItems;
         private boolean playerInventoryInteraction;
 
+        private int[] transferSlots;
+
         private boolean closeable;
 
         Settings() {
             this.transferItems = false;
             this.playerInventoryInteraction = false;
+            this.transferSlots = null;
             this.closeable = true;
         }
 
@@ -415,6 +467,13 @@ public abstract class Menu {
          */
         public boolean transferItems() {
             return this.transferItems;
+        }
+
+        /**
+         * @return slots in which items can be transferred between the player's inventory and the menu
+         */
+        public int[] transferSlots() {
+            return this.transferSlots;
         }
 
         /**
@@ -433,6 +492,7 @@ public abstract class Menu {
 
         /**
          * Sets whether items can be transferred between the player's inventory and the menu.
+         *
          * @param transferItems true if items can be transferred, false otherwise
          * @return this {@link Settings} instance
          */
@@ -442,7 +502,19 @@ public abstract class Menu {
         }
 
         /**
+         * Sets the slots in which items can be transferred between player's inventory and the menu
+         *
+         * @param transferSlots not null if limited
+         * @return this {@link Settings} instance
+         */
+        public Settings transferSlots(int[] transferSlots) {
+            this.transferSlots = transferSlots;
+            return this;
+        }
+
+        /**
          * Sets whether the player's inventory can be interacted with while the menu is open.
+         *
          * @param playerInventoryInteraction true if the player's inventory can be interacted with, false otherwise
          * @return this {@link Settings} instance
          */
@@ -453,6 +525,7 @@ public abstract class Menu {
 
         /**
          * Sets whether the menu can be closed.
+         *
          * @param closeable true if the menu can be closed, false otherwise
          * @return this {@link Settings} instance
          */

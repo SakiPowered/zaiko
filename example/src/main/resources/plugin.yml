@@ -1,7 +1,7 @@
 name: Zaiko-Example
 main: gg.saki.zaiko.example.ExamplePlugin
 version: ${version}
-api-version: 1.18
+api-version: "1.21"
 commands:
   openmenu:
     usage: /<command>

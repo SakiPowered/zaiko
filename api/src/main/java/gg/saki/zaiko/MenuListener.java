@@ -30,10 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -49,7 +46,6 @@ public final class MenuListener implements Listener {
     }
 
     @EventHandler
-    @SuppressWarnings("deprecation")
     private void onClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
@@ -66,12 +62,49 @@ public final class MenuListener implements Listener {
             return;
         }
 
-        Placeable placeable = menu.getPlaceable(event.getRawSlot());
+        if (clickedInventory.getType() == InventoryType.PLAYER) {
+            // Clicked within the player's inventory
+
+            if (event.isShiftClick()) {
+                event.setCancelled(true);
+                return;
+            }
+
+            if (event.getCursor() != null) {
+                if (menu.settings().transferItems()) return;
+
+                // Blocks transfer to the player inventory
+                event.setCancelled(true);
+                return;
+            }
+
+            if (menu.settings().playerInventoryInteraction()) return;
+
+            // Blocks interaction with the player inventory
+            event.setCancelled(true);
+            return;
+        }
+
+        int slot = event.getRawSlot();
+        Placeable placeable = menu.getPlaceable(slot);
 
         if (placeable != null) {
             placeable.click(event);
             return;
         }
+
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null) {
+            // Un-tracked item is being placed in an empty slot
+
+            if (menu.canTransfer(slot)) return;
+
+            event.setCancelled(true);
+            return;
+        }
+
+        // Item is un-tracked in the menu, and being clicked.
+        if (menu.canTransfer(slot)) return;
 
         event.setCancelled(true);
     }
@@ -133,7 +166,7 @@ public final class MenuListener implements Listener {
 
         if (menu == null) return;
 
-        if(!event.isCancelled()) return;
+        if (!event.isCancelled()) return;
 
         this.zaiko.openMenus.remove(player.getUniqueId());
     }
