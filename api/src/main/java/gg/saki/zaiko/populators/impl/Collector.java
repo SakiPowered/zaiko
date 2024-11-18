@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class Collector implements Populator {
@@ -42,15 +43,16 @@ public class Collector implements Populator {
 
     private List<ItemStack> data;
 
-    private final Predicate<ItemStack> acceptable;
-
-    public Collector(int @NotNull [] dataSlots, @Nullable List<ItemStack> data, Predicate<ItemStack> acceptable) {
+    public Collector(int @NotNull [] dataSlots, @Nullable List<ItemStack> data) {
         this.dataSlots = dataSlots;
         this.data = data;
-        this.acceptable = acceptable;
     }
 
     public List<ItemStack> collect(@NotNull Menu menu) {
+        return this.collectAndClear(menu, (i, s) -> true);
+    }
+
+    public List<ItemStack> collectAndClear(@NotNull Menu menu, BiPredicate<ItemStack, Integer> collectable) {
         this.data = new ArrayList<>();
 
         for (int slot : this.dataSlots) {
@@ -58,7 +60,10 @@ public class Collector implements Populator {
             if (placeable == null) continue;
 
             ItemStack item = placeable.getItem();
-            if (!this.acceptable.test(item)) continue;
+
+            if(!collectable.test(item, slot)) continue;
+
+            this.clearSlot(menu, slot);
 
             this.data.add(item);
         }
@@ -67,16 +72,24 @@ public class Collector implements Populator {
     }
 
     public void clear(@NotNull Menu menu) {
-        for (int slot : this.dataSlots) {
-            menu.removeItem(slot);
-        }
+        this.clearWhile(menu, clearable -> true);
+    }
 
-        this.data = null;
+    public void clearWhile(@NotNull Menu menu, Predicate<Integer> clearable) {
+        for (int slot : this.dataSlots) {
+            if (!clearable.test(slot)) continue;
+
+            this.clearSlot(menu, slot);
+        }
+    }
+
+    public void clearSlot(@NotNull Menu menu, int slot) {
+        menu.removeItem(slot);
     }
 
     @Override
     public void populate(@NotNull Menu menu) {
-        if(this.data == null) return;
+        if (this.data == null) return;
 
         Iterator<ItemStack> iterator = this.data.iterator();
 

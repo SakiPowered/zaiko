@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CollectorMenu extends Menu {
 
@@ -55,18 +56,22 @@ public class CollectorMenu extends Menu {
         items.add(new ItemStack(Material.WOODEN_AXE));
         items.add(new ItemStack(Material.STONE_AXE));
 
-        this.collector = new Collector(SLOTS, items, item -> {
-            return item.getType().name().contains("AXE");
-        });
+        this.collector = new Collector(SLOTS, items);
     }
 
     @Override
     public void build(@NotNull Player player) {
         this.place(4, 3, Button.builder().item(new ItemStack(Material.REDSTONE)).action((p, e) -> {
-            List<ItemStack> items = this.collector.collect(this);
-            this.collector.clear(this);
+            AtomicInteger amount = new AtomicInteger();
+
+            List<ItemStack> items = this.collector.collectAndClear(this, (i, s) -> {
+                if(!i.getType().name().contains("AXE")) return false;
+
+                return amount.getAndIncrement() > 4;
+            });
 
             p.sendMessage("Size: " + items.size());
+            p.sendMessage("Amount: " + amount.get());
 
             for (ItemStack item : items) {
                 p.getInventory().addItem(item);
