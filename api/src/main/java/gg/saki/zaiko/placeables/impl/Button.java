@@ -72,9 +72,9 @@ public class Button implements Placeable {
 
         Player player = (Player) event.getWhoClicked();
 
-        this.action.accept(player, event);
-
         event.setCancelled(true);
+
+        this.action.accept(player, event);
     }
 
     @Override

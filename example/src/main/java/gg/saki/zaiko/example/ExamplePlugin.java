@@ -79,6 +79,9 @@ public class ExamplePlugin extends JavaPlugin {
             case "potions":
                 menu = new ExamplePaginatedMenu(this.zaiko, player);
                 break;
+            case "collector":
+                menu = new CollectorMenu(this.zaiko);
+                break;
             default:
                 player.sendMessage("Usage: /openmenu <example|potions>");
                 return true;
@@ -95,7 +98,7 @@ public class ExamplePlugin extends JavaPlugin {
         if (!command.getName().equalsIgnoreCase("openmenu")) return null;
 
         if (args.length == 1) {
-            return Stream.of("example", "potions").filter(s -> s.startsWith(args[0].toLowerCase())).toList();
+            return Stream.of("example", "potions", "collector").filter(s -> s.startsWith(args[0].toLowerCase())).toList();
         }
 
         return Collections.emptyList();

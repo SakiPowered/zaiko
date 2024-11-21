@@ -28,13 +28,11 @@ import gg.saki.zaiko.placeables.Placeable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The main listener for handling interactions with {@link Menu}s.
@@ -48,7 +46,6 @@ public final class MenuListener implements Listener {
     }
 
     @EventHandler
-    @SuppressWarnings("deprecation")
     private void onClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
@@ -61,33 +58,55 @@ public final class MenuListener implements Listener {
         Inventory clickedInventory = event.getClickedInventory();
 
         if (clickedInventory == null) {
+            event.setCancelled(true);
             return;
         }
 
-        if (menu.settings().playerInventoryInteraction()
-                && clickedInventory.getType() == InventoryType.PLAYER) return;
+        if (clickedInventory.getType() == InventoryType.PLAYER) {
+            // Clicked within the player's inventory
 
-        Placeable placeable = menu.getPlaceable(event.getSlot());
+            if (event.isShiftClick()) {
+                event.setCancelled(true);
+                return;
+            }
+
+            if (event.getCursor() != null) {
+                if (menu.settings().transferItems()) return;
+
+                // Blocks transfer to the player inventory
+                event.setCancelled(true);
+                return;
+            }
+
+            if (menu.settings().playerInventoryInteraction()) return;
+
+            // Blocks interaction with the player inventory
+            event.setCancelled(true);
+            return;
+        }
+
+        int slot = event.getRawSlot();
+        Placeable placeable = menu.getPlaceable(slot);
 
         if (placeable != null) {
             placeable.click(event);
             return;
         }
 
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null) {
+            // Un-tracked item is being placed in an empty slot
 
-        if (!menu.settings().transferItems()) {
-            if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && clickedInventory.getType() == InventoryType.PLAYER) {
-                event.setCancelled(true);
-                event.setCursor(null);
-                return;
-            }
+            if (menu.canTransfer(slot)) return;
 
-            if (clickedInventory.getType() != InventoryType.PLAYER) {
-                event.setCancelled(true);
-                player.getInventory().addItem(event.getCursor());
-                event.setCursor(null);
-            }
+            event.setCancelled(true);
+            return;
         }
+
+        // Item is un-tracked in the menu, and being clicked.
+        if (menu.canTransfer(slot)) return;
+
+        event.setCancelled(true);
     }
 
 
@@ -100,17 +119,6 @@ public final class MenuListener implements Listener {
         Menu menu = this.zaiko.getOpenMenu(player.getUniqueId());
 
         if (menu == null) return;
-
-        Inventory inventory = event.getInventory();
-
-
-        List<Integer> slots = new ArrayList<>(event.getInventorySlots());
-        if (!menu.settings().transferItems() && inventory.getType() != InventoryType.PLAYER && inventory.getItem(slots.get(0)) == null) {
-            event.setCancelled(true);
-            player.getInventory().addItem(event.getOldCursor());
-            event.setCursor(null);
-            return;
-        }
 
         ItemStack cursor = event.getOldCursor();
 
@@ -146,5 +154,20 @@ public final class MenuListener implements Listener {
 
         // internal close/cleanup
         menu.close(player, event.getInventory(), true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onOpen(InventoryOpenEvent event) {
+        if (!(event.getPlayer() instanceof Player)) return;
+
+        Player player = (Player) event.getPlayer();
+
+        Menu menu = this.zaiko.getOpenMenu(player.getUniqueId());
+
+        if (menu == null) return;
+
+        if (!event.isCancelled()) return;
+
+        this.zaiko.openMenus.remove(player.getUniqueId());
     }
 }
