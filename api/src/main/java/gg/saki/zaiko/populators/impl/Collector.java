@@ -27,6 +27,7 @@ package gg.saki.zaiko.populators.impl;
 import gg.saki.zaiko.Menu;
 import gg.saki.zaiko.placeables.Placeable;
 import gg.saki.zaiko.populators.Populator;
+import gg.saki.zaiko.utils.Pair;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Collector implements Populator {
@@ -49,23 +50,24 @@ public class Collector implements Populator {
     }
 
     public List<ItemStack> collect(@NotNull Menu menu) {
-        return this.collectAndClear(menu, (i, s) -> true);
+        return this.collectAndProcess(menu, (i) -> null);
     }
 
-    public List<ItemStack> collectAndClear(@NotNull Menu menu, BiPredicate<ItemStack, Integer> collectable) {
+    public List<ItemStack> collectAndProcess(@NotNull Menu menu, Function<ItemStack, Pair<ItemStack, ItemStack>> processor) {
         this.data = new ArrayList<>();
 
         for (int slot : this.dataSlots) {
             Placeable placeable = menu.getPlaceable(slot);
             if (placeable == null) continue;
 
-            ItemStack item = placeable.getItem();
+            Pair<ItemStack, ItemStack> pair = processor.apply(placeable.getItem());
+            if (pair.right() == null) {
+                this.clearSlot(menu, slot);
+            } else {
+                menu.insertItem(slot, pair.right());
+            }
 
-            if(!collectable.test(item, slot)) continue;
-
-            this.clearSlot(menu, slot);
-
-            this.data.add(item);
+            if (pair.left() != null) this.data.add(pair.left());
         }
 
         return this.data;

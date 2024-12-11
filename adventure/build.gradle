@@ -1,5 +1,5 @@
 archivesBaseName = 'zaiko-adventure'
-version = '2.1.5-SNAPSHOT' // < change this version
+version = '2.1.6-SNAPSHOT' // < change this version
 description = 'Adventure support for Zaiko titles'
 
 dependencies {

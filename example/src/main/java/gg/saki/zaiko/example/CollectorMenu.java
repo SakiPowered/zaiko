@@ -30,6 +30,7 @@ import gg.saki.zaiko.Zaiko;
 import gg.saki.zaiko.placeables.impl.Button;
 import gg.saki.zaiko.populators.impl.Collector;
 import gg.saki.zaiko.populators.impl.PaginatedPopulator;
+import gg.saki.zaiko.utils.Pair;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CollectorMenu extends Menu {
 
@@ -62,16 +62,20 @@ public class CollectorMenu extends Menu {
     @Override
     public void build(@NotNull Player player) {
         this.place(4, 3, Button.builder().item(new ItemStack(Material.REDSTONE)).action((p, e) -> {
-            AtomicInteger amount = new AtomicInteger();
+            List<ItemStack> items = this.collector.collectAndProcess(this, (i) -> {
+                if (!i.getType().name().contains("EGG")) return Pair.of(null, i);
 
-            List<ItemStack> items = this.collector.collectAndClear(this, (i, s) -> {
-                if(!i.getType().name().contains("AXE")) return false;
+                ItemStack mapping = i.clone();
+                int amount = Math.max(0, i.getAmount() - 4);
 
-                return amount.getAndIncrement() > 4;
+                mapping.setAmount(amount);
+
+                i.setAmount(i.getAmount() - amount);
+
+                return Pair.of(i, mapping);
             });
 
             p.sendMessage("Size: " + items.size());
-            p.sendMessage("Amount: " + amount.get());
 
             for (ItemStack item : items) {
                 p.getInventory().addItem(item);
