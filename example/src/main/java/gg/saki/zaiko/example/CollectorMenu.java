@@ -30,7 +30,6 @@ import gg.saki.zaiko.Zaiko;
 import gg.saki.zaiko.placeables.impl.Button;
 import gg.saki.zaiko.populators.impl.Collector;
 import gg.saki.zaiko.populators.impl.PaginatedPopulator;
-import gg.saki.zaiko.utils.Pair;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

@@ -27,7 +27,6 @@ package gg.saki.zaiko.populators.impl;
 import gg.saki.zaiko.Menu;
 import gg.saki.zaiko.placeables.Placeable;
 import gg.saki.zaiko.populators.Populator;
-import gg.saki.zaiko.utils.Pair;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Collector implements Populator {
