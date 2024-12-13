@@ -50,24 +50,21 @@ public class Collector implements Populator {
     }
 
     public List<ItemStack> collect(@NotNull Menu menu) {
-        return this.collectAndProcess(menu, (i) -> null);
+        return this.collectIf(menu, (i) -> true);
     }
 
-    public List<ItemStack> collectAndProcess(@NotNull Menu menu, Function<ItemStack, Pair<ItemStack, ItemStack>> processor) {
+    public List<ItemStack> collectIf(@NotNull Menu menu, Predicate<ItemStack> collectable) {
         this.data = new ArrayList<>();
 
         for (int slot : this.dataSlots) {
             Placeable placeable = menu.getPlaceable(slot);
             if (placeable == null) continue;
 
-            Pair<ItemStack, ItemStack> pair = processor.apply(placeable.getItem());
-            if (pair.right() == null) {
-                this.clearSlot(menu, slot);
-            } else {
-                menu.insertItem(slot, pair.right());
-            }
+            ItemStack item = placeable.getItem();
 
-            if (pair.left() != null) this.data.add(pair.left());
+            if (!collectable.test(item)) continue;
+
+            this.data.add(item);
         }
 
         return this.data;
@@ -87,6 +84,16 @@ public class Collector implements Populator {
 
     public void clearSlot(@NotNull Menu menu, int slot) {
         menu.removeItem(slot);
+    }
+
+    public void insertItem(@NotNull Menu menu, @NotNull ItemStack item) {
+        for (int slot : this.dataSlots) {
+            if (menu.containsPlaceable(slot)) continue;
+
+            menu.insertItem(slot, item);
+
+            break;
+        }
     }
 
     @Override

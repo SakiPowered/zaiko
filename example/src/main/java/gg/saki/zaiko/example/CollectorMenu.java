@@ -53,7 +53,7 @@ public class CollectorMenu extends Menu {
                 .playerInventoryInteraction(true);
 
         List<ItemStack> items = new ArrayList<>();
-        items.add(new ItemStack(Material.WOODEN_AXE));
+        items.add(new ItemStack(Material.EGG));
         items.add(new ItemStack(Material.STONE_AXE));
 
         this.collector = new Collector(SLOTS, items);
@@ -62,23 +62,15 @@ public class CollectorMenu extends Menu {
     @Override
     public void build(@NotNull Player player) {
         this.place(4, 3, Button.builder().item(new ItemStack(Material.REDSTONE)).action((p, e) -> {
-            List<ItemStack> items = this.collector.collectAndProcess(this, (i) -> {
-                if (!i.getType().name().contains("EGG")) return Pair.of(null, i);
-
-                ItemStack mapping = i.clone();
-                int amount = Math.max(0, i.getAmount() - 4);
-
-                mapping.setAmount(amount);
-
-                i.setAmount(i.getAmount() - amount);
-
-                return Pair.of(i, mapping);
-            });
+            List<ItemStack> items = this.collector.collectIf(this, (i) -> i.getType().name().contains("EGG"));
 
             p.sendMessage("Size: " + items.size());
 
             for (ItemStack item : items) {
                 p.getInventory().addItem(item);
+
+                item.setAmount(Math.max(0, item.getAmount() / 2));
+                this.collector.insertItem(this, item);
             }
         }).build());
 
