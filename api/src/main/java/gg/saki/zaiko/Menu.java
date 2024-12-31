@@ -358,11 +358,7 @@ public abstract class Menu {
     }
 
     public void removeItem(int slot) {
-        if (this.unstableInventory == null) return;
-
-        if (this.containsPlaceable(slot)) return;
-
-        this.unstableInventory.setItem(slot, null);
+        this.insertItem(slot, null);
     }
 
     /**

@@ -86,7 +86,7 @@ public class Collector implements Populator {
 
     public void insertItem(@NotNull Menu menu, @NotNull ItemStack item) {
         for (int slot : this.dataSlots) {
-            if (menu.containsPlaceable(slot)) continue;
+            if (menu.getPlaceable(slot) != null) continue;
 
             menu.insertItem(slot, item);
 
