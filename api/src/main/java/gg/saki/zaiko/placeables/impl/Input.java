@@ -24,12 +24,19 @@
 
 package gg.saki.zaiko.placeables.impl;
 
+import gg.saki.zaiko.Zaiko;
 import gg.saki.zaiko.placeables.Placeable;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -39,17 +46,22 @@ import java.util.function.Consumer;
  */
 public class Input implements Placeable {
 
-    private final ItemStack original;
+    private static final NamespacedKey ORIGINAL_KEY = new NamespacedKey("zaiko", "original");
+
+    private @NotNull
+    final ItemStack original;
     private @NotNull ItemStack item;
     private final @NotNull Consumer<ItemStack> action;
 
     /**
      * Creates a new {@link Input} with the specified item and action.
      *
-     * @param item the default item in the slot
+     * @param item   the default item in the slot
      * @param action the action to perform when the item is interacted with (this will be called with the new item that the player inserted/removed)
      */
     public Input(@NotNull ItemStack item, @NotNull Consumer<ItemStack> action) {
+        this.tagAsOriginal(item);
+
         this.original = item;
         this.item = item;
         this.action = action;
@@ -59,10 +71,12 @@ public class Input implements Placeable {
      * Creates a new {@link Input} with the specified item.
      * <p>
      * There will be no action performed when the item is interacted with.
+     *
      * @param item the default item in the slot
      */
     public Input(@NotNull ItemStack item) {
-        this(item, i -> {});
+        this(item, i -> {
+        });
     }
 
     @Override
@@ -70,103 +84,74 @@ public class Input implements Placeable {
         return this.item;
     }
 
+    private void updateItem(@NotNull InventoryClickEvent event, @Nullable ItemStack item) {
+        if (item == null) {
+            item = original;
+        }
+
+        this.item = item;
+
+        event.setCurrentItem(this.item);
+    }
+
+    private void resetItem(@NotNull InventoryClickEvent event) {
+        this.updateItem(event, null);
+    }
+
+    private ItemStack tagAsOriginal(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return item;
+
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(ORIGINAL_KEY, PersistentDataType.BYTE, (byte) 0);
+
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    private boolean isTaggedAsOriginal(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
+
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+
+        return pdc.has(ORIGINAL_KEY, PersistentDataType.BYTE);
+    }
+
     @Override
-    @SuppressWarnings("deprecation")
-    public void click(InventoryClickEvent event) {
-        InventoryAction action = event.getAction();
+    public void click(Zaiko zaiko, InventoryClickEvent event) {
+        JavaPlugin plugin = zaiko.getPlugin();
 
         if (!(event.getWhoClicked() instanceof Player)) return;
 
         Player player = (Player) event.getWhoClicked();
 
-        switch (action) {
-            case SWAP_WITH_CURSOR: {
-                event.setCancelled(true);
+        ItemStack cursor = event.getCursor();
+        ItemStack current = event.getCurrentItem();
 
-                ItemStack placed = event.getCursor();
+        event.setCancelled(true);
 
-                if (placed == null) {
-                    return;
-                }
-
-                event.setCurrentItem(placed);
-
-                event.setCursor(null);
-
-                this.item = placed;
-                this.action.accept(placed);
-                break;
-            }
-
-            case PICKUP_ALL:
-            case PICKUP_HALF:
-            case PICKUP_ONE:
-            case PICKUP_SOME:
-            case MOVE_TO_OTHER_INVENTORY: {
-                event.setCancelled(true);
-
-                ItemStack picked = event.getCurrentItem();
-
-                if (original.equals(picked)) {
-                    return;
-                }
-
-                player.getInventory().addItem(picked);
-                event.getInventory().setItem(event.getSlot(), this.original);
-                break;
-            }
-
-            case HOTBAR_MOVE_AND_READD: {
-                event.setCancelled(true);
-
-                int hotbarSlot = event.getHotbarButton();
-                if (hotbarSlot < 0) return;
-
-                ItemStack hovered = event.getCurrentItem();
-                ItemStack swapped = player.getInventory().getItem(hotbarSlot);
-
-                if (swapped == null) {
-                    return;
-                }
-
-                if (original.equals(hovered)) {
-                    event.setCurrentItem(swapped);
-                    this.item = swapped;
-                    this.action.accept(swapped);
-                    player.getInventory().setItem(hotbarSlot, null);
-                    return;
-                }
-
-                player.getInventory().setItem(hotbarSlot, hovered);
-                event.setCurrentItem(swapped);
-                this.item = swapped;
-                this.action.accept(swapped);
-                break;
-            }
-
-            case HOTBAR_SWAP: {
-                event.setCancelled(true);
-
-                ItemStack hovered = event.getCurrentItem();
-
-                if (original.equals(hovered)) return;
-
-                int hotbarSlot = event.getHotbarButton();
-                if (hotbarSlot < 0) return;
-
-                player.getInventory().setItem(hotbarSlot, hovered);
-                event.getInventory().setItem(event.getSlot(), this.original);
-                break;
-            }
-
-            case DROP_ALL_CURSOR:
-            case DROP_ALL_SLOT:
-            case DROP_ONE_CURSOR:
-            case DROP_ONE_SLOT: {
-                event.setCancelled(true);
-                break;
-            }
+        if (current == null) {
+            this.resetItem(event);
+            return;
         }
+
+        if (cursor == null || cursor.getType() == Material.AIR) {
+            if (this.isTaggedAsOriginal(current)) return;
+
+            player.getInventory().addItem(current);
+
+            this.resetItem(event);
+
+            return;
+        }
+
+        plugin.getLogger().info("Cursor is populated, and not tagged as original");
+
+        this.updateItem(event, cursor);
+
+        event.setCursor(null);
     }
 
     /**
@@ -206,7 +191,8 @@ public class Input implements Placeable {
         private Consumer<ItemStack> action;
 
         private Builder() {
-            this.action = item -> {};
+            this.action = item -> {
+            };
         }
 
         /**

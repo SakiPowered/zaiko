@@ -24,6 +24,7 @@
 
 package gg.saki.zaiko.placeables.impl;
 
+import gg.saki.zaiko.Zaiko;
 import gg.saki.zaiko.placeables.Placeable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -67,7 +68,7 @@ public class Button implements Placeable {
 
 
     @Override
-    public void click(InventoryClickEvent event) {
+    public void click(Zaiko zaiko, InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
         Player player = (Player) event.getWhoClicked();

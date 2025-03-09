@@ -54,8 +54,8 @@ public class ExampleMenu extends Menu {
         // fill the outer border with alternating panes
         this.addTemplate(OuterFill.alternating(pane, pane2, OuterFill.ALL));
 
-        // enable player inventory interaction, disable item transfer, and make the menu not closeable (except by pressing the close button)
-        this.settings().playerInventoryInteraction(true).transferItems(false).closeable(false);
+        // enable player inventory interaction, enable item transfer, and make the menu not closeable (except by pressing the close button)
+        this.settings().playerInventoryInteraction(true).transferItems(true).closeable(false);
     }
 
     @Override

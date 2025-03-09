@@ -24,6 +24,7 @@
 
 package gg.saki.zaiko.placeables.impl;
 
+import gg.saki.zaiko.Zaiko;
 import gg.saki.zaiko.placeables.Placeable;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -66,7 +67,7 @@ public class Toggle implements Placeable {
     }
 
     @Override
-    public void click(InventoryClickEvent event) {
+    public void click(Zaiko zaiko, InventoryClickEvent event) {
         this.state = !state;
         this.currentItem = this.onChange.apply(this, this.state);
         event.getInventory().setItem(event.getSlot(), this.currentItem);

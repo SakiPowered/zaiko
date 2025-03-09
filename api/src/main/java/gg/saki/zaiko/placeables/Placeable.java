@@ -24,6 +24,7 @@
 
 package gg.saki.zaiko.placeables;
 
+import gg.saki.zaiko.Zaiko;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
@@ -43,7 +44,7 @@ public interface Placeable {
      * Called when the item is clicked in the menu.
      * @param event the event that triggered this method
      */
-    default void click(InventoryClickEvent event) {
+    default void click(Zaiko zaiko, InventoryClickEvent event) {
     }
 
     /**

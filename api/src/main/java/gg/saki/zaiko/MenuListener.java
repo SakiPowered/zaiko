@@ -89,7 +89,7 @@ public final class MenuListener implements Listener {
         Placeable placeable = menu.getPlaceable(slot);
 
         if (placeable != null) {
-            placeable.click(event);
+            placeable.click(zaiko, event);
             return;
         }
 

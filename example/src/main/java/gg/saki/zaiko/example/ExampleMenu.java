@@ -44,6 +44,11 @@ public class ExampleMenu extends Menu {
 
     public ExampleMenu(@NotNull Zaiko zaiko) {
         super(zaiko, "Example Menu", 3 * 9);
+        // enable player inventory interaction, enable item transfer, and make the menu not closeable (except by pressing the close button)
+        this.settings()
+                .transferItems(true)
+                .transferSlots(new int[] {16})
+                .playerInventoryInteraction(true);
 
         // settings
         Placeable pane = new Icon(new ItemBuilder(getMaterial("STAINED_GLASS_PANE", "CYAN_STAINED_GLASS_PANE")).name("").durability(9).build());
@@ -51,9 +56,6 @@ public class ExampleMenu extends Menu {
 
         // fill the outer border with alternating panes
         this.addTemplate(OuterFill.alternating(pane, pane2, OuterFill.ALL));
-
-        // enable player inventory interaction, disable item transfer, and make the menu not closeable (except by pressing the close button)
-        this.settings().playerInventoryInteraction(true).transferItems(false).closeable(false);
     }
 
     @Override
