@@ -150,6 +150,8 @@ public abstract class Menu {
      * @param player the player to open the menu for
      */
     public final void open(@NotNull Player player) {
+        player.closeInventory();
+
         this.reset();
 
         if (this.templates != null) {
@@ -172,8 +174,6 @@ public abstract class Menu {
 
             inventory.setItem(i, placeable.getItem());
         }
-
-        player.closeInventory();
 
         this.zaiko.openMenus.put(player.getUniqueId(), this);
 
